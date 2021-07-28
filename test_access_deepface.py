@@ -1,12 +1,11 @@
 import os
 import sys
-# import 
+import pandas as pd
+pd.set_option('display.max_colwidth', None)
 
-# sys.path.insert(1, '/path/to/application/app/folder')
-
-# from deepface import DeepFace
+from deepface import DeepFace
 
 
 if __name__ == "__main__":
-    # sys.path.insert(1, '/media/arthur/DATA/Code/projects/16_facial_recognition/face_recognition_project_simplon/deepface')
-    print(sys.path)
+    df = DeepFace.find(img_path="../face_detection/test_images/test_chris.jpg", db_path="../face_detection/database")
+    print(df.head())
