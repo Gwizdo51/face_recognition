@@ -1,3 +1,9 @@
+if __name__ == "__main__":
+	import sys
+	if '/media/arthur/DATA/Code/projects/16_facial_recognition/face_recognition_project_simplon' not in sys.path:
+		sys.path.insert(0, '/media/arthur/DATA/Code/projects/16_facial_recognition/face_recognition_project_simplon')
+	# '/media/arthur/DATA/Code/projects/16_facial_recognition/face_recognition_project_simplon'
+
 import cv2
 import os
 import pandas as pd
@@ -57,6 +63,34 @@ def detect_face(detector, img, align = True):
 
 	return detected_face, img_region
 
+def detect_faces(detector, img, align = True):
+
+	detected_faces_list = []
+	img_regions_list = []
+	
+	#faces = detector["face_detector"].detectMultiScale(img, 1.3, 5)
+	faces = detector["face_detector"].detectMultiScale(img, 1.1, 10)
+
+	# print(faces)
+	# print(type(faces))
+	if len(faces) > 0:
+
+		print(f"{len(faces)} faces found")
+		img_regions_list = faces
+
+		for face in faces:
+			x,y,w,h = face
+			detected_face_img = img[int(y):int(y+h), int(x):int(x+w)]
+
+			if align:
+				detected_face_img = align_face(detector["eye_detector"], detected_face_img)
+
+			detected_faces_list.append(detected_face_img)
+	else:
+		print("no faces found")
+	
+	return detected_faces_list, img_regions_list
+
 def align_face(eye_detector, img):
 
 	detected_face_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY) #eye detector expects gray scale image
@@ -107,3 +141,6 @@ def get_opencv_path():
 		path = path + "/" + folder
 
 	return path+"/data/"
+
+if __name__ == "__main__":
+	print('/media/arthur/DATA/Code/projects/16_facial_recognition/face_recognition_project_simplon' not in sys.path)

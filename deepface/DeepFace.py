@@ -1,3 +1,9 @@
+if __name__ == "__main__":
+	import sys
+	if '/media/arthur/DATA/Code/projects/16_facial_recognition/face_recognition_project_simplon' not in sys.path:
+		sys.path.insert(0, '/media/arthur/DATA/Code/projects/16_facial_recognition/face_recognition_project_simplon')
+	# '/media/arthur/DATA/Code/projects/16_facial_recognition/face_recognition_project_simplon'
+
 import warnings
 warnings.filterwarnings("ignore")
 
@@ -799,3 +805,7 @@ def detectFace(img_path, detector_backend = 'opencv', enforce_detection = True):
 #main
 
 functions.initializeFolder()
+
+if __name__ == "__main__":
+	
+	print("hello world!")

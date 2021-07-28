@@ -1,3 +1,8 @@
+if __name__ == "__main__":
+	import sys
+	if '/media/arthur/DATA/Code/projects/16_facial_recognition/face_recognition_project_simplon' not in sys.path:
+		sys.path.insert(0, '/media/arthur/DATA/Code/projects/16_facial_recognition/face_recognition_project_simplon')
+
 import os
 import numpy as np
 import pandas as pd
@@ -179,3 +184,23 @@ def find_input_shape(model):
 		input_shape = tuple(input_shape)
 
 	return input_shape
+
+def draw_boxes(img, boxes):
+
+	new_img = img.copy()
+
+	for box in boxes:
+
+		x, y, w, h = box
+		x1 = x
+		y1 = y
+		x2 = x + w
+		y2 = y + h
+
+		new_img = cv2.rectangle(new_img, pt1=(x1, y1), pt2=(x2, y2), color=(0,0,255), thickness=2)
+
+	return new_img
+
+
+if __name__ == "__main__":
+	pass
