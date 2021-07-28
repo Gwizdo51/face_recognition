@@ -14,12 +14,16 @@
     - input: a cv2 image array and a detector name
     - output: the list of all faces found as numpy arrays, and a list of all boxes (x,y,w,h) around the faces found on the original image
 - test it on opencv ***DONE***
-- add a function `preprocess_face_no_detection` to function.py
+- add a function `preprocess_face_no_detection` to function.py ***DONE***
     - input: a cv2 face image and a target size
     - output: the preprocessed array representing the face image
 - test it on opencv
-- add a function `represent_no_detection` to DeepFace.py
+- add a function `represent_no_detection` to DeepFace.py (maybe not ? maybe call preprocess directly ?)
 - test it on opencv
+- add a function `draw_box` to functions.py ***DONE***
+    - input: a cv2 image, a (x,y,w,h) box, a color and a name
+    - output: a cv2 with the box and the name drawn
+- test is on opencv ***DONE***
 - add a function `find_faces` to DeepFace.py
 - test it on opencv
 

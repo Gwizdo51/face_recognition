@@ -187,6 +187,43 @@ def detect_faces(img, detector_backend='opencv', grayscale=False, enforce_detect
 		else:
 			raise ValueError("Faces could not be detected. Please confirm that the picture contains facess or consider to set enforce_detection param to False.")
 
+def preprocess_face_no_detection(img, target_size=(224, 224)):
+
+	if img.shape[0] == 0 or img.shape[1] == 0:
+		raise ValueError("Detected face image shape is ", img.shape,". Cannot preprocess.")
+	
+	#---------------------------------------------------
+	#resize image to expected shape
+
+	# img = cv2.resize(img, target_size) #resize causes transformation on base image, adding black pixels to resize will not deform the base image
+	
+	# First resize the longer side to the target size
+	#factor = target_size[0] / max(img.shape)
+	
+	factor_0 = target_size[0] / img.shape[0]
+	factor_1 = target_size[1] / img.shape[1]
+	factor = min(factor_0, factor_1)
+	
+	dsize = (int(img.shape[1] * factor), int(img.shape[0] * factor))
+	img = cv2.resize(img, dsize)
+
+	# Then pad the other side to the target size by adding black pixels
+	diff_0 = target_size[0] - img.shape[0]
+	diff_1 = target_size[1] - img.shape[1]
+	img = np.pad(img, ((diff_0 // 2, diff_0 - diff_0 // 2), (diff_1 // 2, diff_1 - diff_1 // 2), (0, 0)), 'constant')
+	
+	#double check: if target image is not still the same size with target.
+	if img.shape[0:2] != target_size:
+		img = cv2.resize(img, target_size)
+	
+	#---------------------------------------------------
+	
+	img_pixels = image.img_to_array(img)
+	img_pixels = np.expand_dims(img_pixels, axis = 0)
+	img_pixels /= 255 #normalize input in [0, 1]
+
+	return img_pixels
+
 def find_input_shape(model):
 
 	#face recognition models have different size of inputs
@@ -204,19 +241,32 @@ def find_input_shape(model):
 
 	return input_shape
 
+def draw_box(img, box, color=(0,0,255), name="Unknown"):
+	
+	x, y, w, h = box
+	x1 = x       # top left corner
+	y1 = y
+	x2 = x + w   # bottom right corner
+	y2 = y + h
+
+	img = cv2.rectangle(img, pt1=(x1, y1), pt2=(x2, y2), color=color, thickness=2)
+
+	# bottom left corner of text string
+	x3 = x
+	y3 = y2 + 17
+	org = (x3, y3)
+	font = cv2.FONT_HERSHEY_SIMPLEX
+	img = cv2.putText(img, name, org, font, fontScale=.75, color=color, thickness=2, lineType=cv2.LINE_8)
+
+	return img
+
 def draw_boxes(img, boxes, color=(0,0,255)):
 
 	new_img = img.copy()
 
 	for box in boxes:
 
-		x, y, w, h = box
-		x1 = x
-		y1 = y
-		x2 = x + w
-		y2 = y + h
-
-		new_img = cv2.rectangle(new_img, pt1=(x1, y1), pt2=(x2, y2), color=color, thickness=2)
+		new_img = draw_box(new_img, box, color=color)
 
 	return new_img
 
