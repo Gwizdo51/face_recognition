@@ -258,6 +258,9 @@ def draw_box(img, box, color=(0,0,255), name="Unknown"):
 	font = cv2.FONT_HERSHEY_SIMPLEX
 	img = cv2.putText(img, name, org, font, fontScale=.75, color=color, thickness=2, lineType=cv2.LINE_8)
 
+	# fonts: https://www.oreilly.com/library/view/mastering-opencv-4/9781789344912/16b55e96-1027-4765-85d8-ced8fa071473.xhtml
+	# linetypes: https://www.oreilly.com/library/view/mastering-opencv-4/9781789344912/5c4150d2-b550-40be-8b18-f2e71e20d9be.xhtml
+
 	return img
 
 def draw_boxes(img, boxes, color=(0,0,255)):

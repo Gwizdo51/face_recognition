@@ -5,7 +5,7 @@
 - add a function `detect_faces` to OpenCvWrapper.py ***DONE***<br>
 - test it ***DONE***
 - add a function `draw_boxes` to functions.py (test function for now) ***DONE***
-    - input: a cv2 image array and the regions on which to draw the boxes
+    - input: a cv2 image array, the regions on which to draw the boxes and a color
     - output: a cv2 image with the boxes drawn
 - test it ***DONE***
 - add a function `detect_faces` to FaceDetector.py ***DONE***
