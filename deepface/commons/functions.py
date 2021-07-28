@@ -185,7 +185,7 @@ def find_input_shape(model):
 
 	return input_shape
 
-def draw_boxes(img, boxes):
+def draw_boxes(img, boxes, color=(0,0,255)):
 
 	new_img = img.copy()
 
@@ -197,7 +197,7 @@ def draw_boxes(img, boxes):
 		x2 = x + w
 		y2 = y + h
 
-		new_img = cv2.rectangle(new_img, pt1=(x1, y1), pt2=(x2, y2), color=(0,0,255), thickness=2)
+		new_img = cv2.rectangle(new_img, pt1=(x1, y1), pt2=(x2, y2), color=color, thickness=2)
 
 	return new_img
 

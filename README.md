@@ -2,14 +2,14 @@
 
 ## TODO
 
-- add a function `detect_faces` to OpenCvWrapper.py<br>
-- test it
-- add a function `draw_boxes` to functions.py (test function for now)
+- add a function `detect_faces` to OpenCvWrapper.py ***DONE***<br>
+- test it ***DONE***
+- add a function `draw_boxes` to functions.py (test function for now) ***DONE***
     - input: a cv2 image array and the regions on which to draw the boxes
     - output: a cv2 image with the boxes drawn
-- test it
-- add a function `detect_faces` to FaceDetector.py
-- test it on opencv
+- test it ***DONE***
+- add a function `detect_faces` to FaceDetector.py ***DONE***
+- test it on opencv ***DONE***
 - add a function `detect_faces` to functions.py
 - test it on opencv
 - add a function `preprocess_face_no_detection` to function.py

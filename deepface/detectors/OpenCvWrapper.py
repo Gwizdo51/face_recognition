@@ -65,7 +65,7 @@ def detect_face(detector, img, align = True):
 
 def detect_faces(detector, img, align = True):
 
-	detected_faces_list = []
+	detected_faces_images = []
 	img_regions_list = []
 	
 	#faces = detector["face_detector"].detectMultiScale(img, 1.3, 5)
@@ -85,11 +85,11 @@ def detect_faces(detector, img, align = True):
 			if align:
 				detected_face_img = align_face(detector["eye_detector"], detected_face_img)
 
-			detected_faces_list.append(detected_face_img)
+			detected_faces_images.append(detected_face_img)
 	else:
 		print("no faces found")
 	
-	return detected_faces_list, img_regions_list
+	return detected_faces_images, img_regions_list
 
 def align_face(eye_detector, img):
 

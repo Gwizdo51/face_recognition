@@ -50,6 +50,25 @@ def detect_face(face_detector, detector_backend, img, align = True):
 
     return face, region
 
+def detect_faces(face_detector, detector_backend, img, align = True):
+    
+    backends = {
+        'opencv': OpenCvWrapper.detect_faces,
+        # 'ssd': SsdWrapper.detect_faces,
+        # 'dlib': DlibWrapper.detect_faces,
+        # 'mtcnn': MtcnnWrapper.detect_faces,
+        # 'retinaface': RetinaFaceWrapper.detect_faces
+    }
+
+    detect_faces = backends.get(detector_backend)
+
+    if detect_faces:
+        detected_faces_images, img_regions_list = detect_faces(face_detector, img, align)
+    else:
+        raise ValueError("invalid detector_backend passed - " + detector_backend)
+
+    return detected_faces_images, img_regions_list
+
 def alignment_procedure(img, left_eye, right_eye):
 
 	#this function aligns given face in img based on left and right eye coordinates
