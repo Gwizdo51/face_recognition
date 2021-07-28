@@ -168,6 +168,25 @@ def preprocess_face(img, target_size=(224, 224), grayscale = False, enforce_dete
 	else:
 		return img_pixels
 
+def detect_faces(img, detector_backend='opencv', grayscale=False, enforce_detection=False, align=True):
+	
+	# img_region = [0, 0, img.shape[0], img.shape[1]]
+
+	#detector stored in a global variable in FaceDetector object.
+	#this call should be completed very fast because it will return found in memory
+	#it will not build face detector model in each call (consider for loops)
+	face_detector = FaceDetector.build_model(detector_backend)
+
+	detected_faces_images, img_regions_list = FaceDetector.detect_faces(face_detector, detector_backend, img, align)
+
+	if len(detected_faces_images) >= 0:
+		return detected_faces_images, img_regions_list
+	else:
+		if enforce_detection == False:
+			return detected_faces_images, img_regions_list
+		else:
+			raise ValueError("Faces could not be detected. Please confirm that the picture contains facess or consider to set enforce_detection param to False.")
+
 def find_input_shape(model):
 
 	#face recognition models have different size of inputs
