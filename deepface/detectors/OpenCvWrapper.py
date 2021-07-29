@@ -75,7 +75,7 @@ def detect_faces(detector, img, align = True):
 	# print(type(faces))
 	if len(faces) > 0:
 
-		print(f"{len(faces)} faces found")
+		# print(f"{len(faces)} faces found")
 		img_regions_list = faces
 
 		for face in faces:

@@ -18,13 +18,15 @@
     - input: a cv2 face image and a target size
     - output: the preprocessed array representing the face image
 - test it on opencv
-- add a function `represent_no_detection` to DeepFace.py (maybe not ? maybe call preprocess directly ?)
+- add a function `_represent_no_detection` to DeepFace.py ***DONE***
+    - input:
+    - output:
 - test it on opencv
 - add a function `draw_box` to functions.py ***DONE***
     - input: a cv2 image, a (x,y,w,h) box, a color and a name
     - output: a cv2 with the box and the name drawn
 - test is on opencv ***DONE***
-- add a function `find_faces` to DeepFace.py
+- add a function `find_faces` to DeepFace.py ***DONE***
 - test it on opencv
 
 modify more model wrappers if i can

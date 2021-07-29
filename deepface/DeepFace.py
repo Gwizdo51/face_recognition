@@ -752,49 +752,38 @@ def represent(img_path, model_name = 'VGG-Face', model = None, enforce_detection
 
 	return embedding
 
-def find_faces(img_path, db_path, model_name ='VGG-Face', distance_metric = 'cosine', model = None, enforce_detection = True, detector_backend = 'opencv', align = True, prog_bar = True):
+def find_faces(img_path, db_path, model_name ='VGG-Face', distance_metric = 'cosine', model = None, enforce_detection = True, detector_backend = 'opencv', align = True, disable_prog_bar = True):
 
 	tic = time.time()
 
+	# functions.initialize_input returns [img_path]
 	img_paths, bulkProcess = functions.initialize_input(img_path)
 
 	#-------------------------------
 
 	# don't allow 'Ensemble' model
 	assert model_name != 'Ensemble', "Ensemble not implemented."
+	# only opencv as detector backend
+	assert detector_backend == 'opencv', "OpenCV is the only face detector implemented so far."
 
 	if os.path.isdir(db_path) == True:
 
 		if model == None:
-
-			if model_name == 'Ensemble':
-				print("Ensemble learning enabled")
-				models = Boosting.loadModel()
-
-			else: #model is not ensemble
-				model = build_model(model_name)
-				models = {}
-				models[model_name] = model
+			model = build_model(model_name)
+			models = {}
+			models[model_name] = model
 
 		else: #model != None
 			print("Already built model is passed")
 
-			if model_name == 'Ensemble':
-				Boosting.validate_model(model)
-				models = model.copy()
-			else:
-				models = {}
-				models[model_name] = model
+			models = {}
+			models[model_name] = model
 
 		#---------------------------------------
 
-		if model_name == 'Ensemble':
-			model_names = ['VGG-Face', 'Facenet', 'OpenFace', 'DeepFace']
-			metric_names = ['cosine', 'euclidean', 'euclidean_l2']
-		elif model_name != 'Ensemble':
-			model_names = []; metric_names = []
-			model_names.append(model_name)
-			metric_names.append(distance_metric)
+		model_names = []; metric_names = []
+		model_names.append(model_name)
+		metric_names.append(distance_metric)
 
 		#---------------------------------------
 
@@ -805,19 +794,19 @@ def find_faces(img_path, db_path, model_name ='VGG-Face', distance_metric = 'cos
 
 			print("WARNING: Representations for images in ",db_path," folder were previously stored in ", file_name, ". If you added new instances after this file creation, then please delete this file and call find function again. It will create it again.")
 
-			f = open(db_path+'/'+file_name, 'rb')
-			representations = pickle.load(f)
+			with open(db_path+'/'+file_name, 'rb') as f:
+				representations = pickle.load(f)
 
 			print("There are ", len(representations)," representations found in ",file_name)
 
 		else: #create representation.pkl from scratch
+			# employees = exact_image_paths_list
 			employees = []
 
 			for r, d, f in os.walk(db_path): # r=root, d=directories, f = files
 				for file in f:
 					if ('.jpg' in file.lower()) or ('.png' in file.lower()):
 						exact_path = r + "/" + file
-						print(r)
 						employees.append(exact_path)
 
 			if len(employees) == 0:
@@ -829,7 +818,7 @@ def find_faces(img_path, db_path, model_name ='VGG-Face', distance_metric = 'cos
 			representations = []
 
 			print("len(employees) =", len(employees))
-			pbar = tqdm(range(0,len(employees)), desc='Finding representations', disable = prog_bar)
+			pbar = tqdm(range(0,len(employees)), desc='Finding representations', disable = disable_prog_bar)
 
 			#for employee in employees:
 			for index in pbar:
@@ -862,123 +851,127 @@ def find_faces(img_path, db_path, model_name ='VGG-Face', distance_metric = 'cos
 		#----------------------------
 		#now, we got representations for facial database
 
-		if model_name != 'Ensemble':
-			df = pd.DataFrame(representations, columns = ["identity", "%s_representation" % (model_name)])
-			# df["identity"] contains the exact paths of the images in the database, df["model_representation"] contains their representations
-			# ---------------- STOPPED HERE 28/07 --------------------------------
-		else: #ensemble learning
-
-			columns = ['identity']
-			[columns.append('%s_representation' % i) for i in model_names]
-
-			df = pd.DataFrame(representations, columns = columns)
-
-		df_base = df.copy() #df will be filtered in each img. we will restore it for the next item.
+		df = pd.DataFrame(representations, columns = ["img_path", "representation"])
+		# add the names of the people
+		df["name"] = df["img_path"].map(lambda path: path.split("/")[-2])
+		# df["identity"] contains the exact paths of the images in the database,
+		# df["model_representation"] contains their representations,
+		# df["name"] contains their names.
+		# return df
 
 		resp_obj = []
 
-		global_pbar = tqdm(range(0, len(img_paths)), desc='Analyzing', disable = prog_bar)
-		for j in global_pbar:
-			img_path = img_paths[j]
+		for image_number in range(len(img_paths)):
+			img_path = img_paths[image_number]
+			cv2_img = functions.load_image(img_path)
 
 			#find representation for passed image
 
-			for j in model_names:
-				custom_model = models[j]
+			for model_name in model_names:
+				custom_model = models[model_name]
 
-				target_representation = represent(img_path = img_path
-					, model_name = model_name, model = custom_model
-					, enforce_detection = enforce_detection, detector_backend = detector_backend
-					, align = align)
+				detected_faces_images, img_regions_list = functions.detect_faces(
+					cv2_img, detector_backend=detector_backend, enforce_detection=False, align=align)
 
-				for k in metric_names:
-					distances = []
-					for index, instance in df.iterrows():
-						source_representation = instance["%s_representation" % (j)]
+				print(f"There are {len(detected_faces_images)} faces found on {img_path.split('/')[-1]}")
 
-						if k == 'cosine':
-							distance = dst.findCosineDistance(source_representation, target_representation)
-						elif k == 'euclidean':
-							distance = dst.findEuclideanDistance(source_representation, target_representation)
-						elif k == 'euclidean_l2':
-							distance = dst.findEuclideanDistance(dst.l2_normalize(source_representation), dst.l2_normalize(target_representation))
+				df_result = pd.DataFrame(columns=["box", "name", "distance", "best_match_path"])
+				
+				# for every face detected ...
+				for face_img, img_region in tqdm(zip(detected_faces_images, img_regions_list), desc='Face', disable = disable_prog_bar):
+					# print(img_region)
 
-						distances.append(distance)
+					# df will be filtered in each face. we will restore it for the next item.
+					df_face = df.copy()
 
-					#---------------------------
+					# compute the representation of the face by the model
+					face_representation = _represent_no_detection(face_image=face_img, model=custom_model)
 
-					if model_name == 'Ensemble' and j == 'OpenFace' and k == 'euclidean':
-						continue
+					for metric in metric_names:
+						
+						# compute the distance between both representations
+						distances = []
+						for db_index in range(len(df_face)):
+							db_representation = df.loc[db_index, "representation"]
+							if metric == 'cosine':
+								distance = dst.findCosineDistance(db_representation, face_representation)
+							elif metric == 'euclidean':
+								distance = dst.findEuclideanDistance(db_representation, face_representation)
+							elif metric == 'euclidean_l2':
+								distance = dst.findEuclideanDistance(dst.l2_normalize(db_representation), dst.l2_normalize(face_representation))
+							else:
+								raise ValueError("Please enter a correct distance metric.")
+							# print("index:", db_index, ", distance:", distance)
+							distances.append(distance)
+					
+					# add the distances to df_face and drop the representations
+					df_face["distance"] = pd.Series(distances)
+					df_face = df_face.drop(columns="representation")
+
+					# delete distances above threshold of model
+					threshold = dst.findThreshold(model_name, metric)
+					# print(threshold)
+					df_face = df_face.loc[df_face["distance"] <= threshold]
+					
+					# sort the values by ascending distance
+					df_face = df_face.sort_values(by="distance", ascending=True)
+
+					# return df_face
+
+					if len(df_face) == 0:
+						new_row = [img_region, np.nan, np.nan, np.nan]
 					else:
-						df["%s_%s" % (j, k)] = distances
+						# select the first name and assign it to the face
+						new_row = [img_region, df_face.iloc[0, :]["name"], df_face.iloc[0, :]["distance"], df_face.iloc[0, :]["img_path"]]
+					df_result = df_result.append(pd.DataFrame([new_row], columns=["box", "name", "distance", "best_match_path"]))
 
-						if model_name != 'Ensemble':
-							threshold = dst.findThreshold(j, k)
-							df = df.drop(columns = ["%s_representation" % (j)])
-							df = df[df["%s_%s" % (j, k)] <= threshold]
+		# reindex df_result
+		df_result = df_result.reset_index(drop=True)
 
-							df = df.sort_values(by = ["%s_%s" % (j, k)], ascending=True).reset_index(drop=True)
+		# ----------------
+		# here we have df_result which contains all informations
+		# now let's draw the boxes on a copy of the image
 
-							resp_obj.append(df)
-							df = df_base.copy() #restore df for the next iteration
+		cv2_img_boxes = cv2_img.copy()
 
-			#----------------------------------
-
-			if model_name == 'Ensemble':
-
-				feature_names = []
-				for j in model_names:
-					for k in metric_names:
-						if model_name == 'Ensemble' and j == 'OpenFace' and k == 'euclidean':
-							continue
-						else:
-							feature = '%s_%s' % (j, k)
-							feature_names.append(feature)
-
-				#print(df.head())
-
-				x = df[feature_names].values
-
-				#--------------------------------------
-
-				boosted_tree = Boosting.build_gbm()
-
-				y = boosted_tree.predict(x)
-
-				verified_labels = []; scores = []
-				for i in y:
-					verified = np.argmax(i) == 1
-					score = i[np.argmax(i)]
-
-					verified_labels.append(verified)
-					scores.append(score)
-
-				df['verified'] = verified_labels
-				df['score'] = scores
-
-				df = df[df.verified == True]
-				#df = df[df.score > 0.99] #confidence score
-				df = df.sort_values(by = ["score"], ascending=False).reset_index(drop=True)
-				df = df[['identity', 'verified', 'score']]
-
-				resp_obj.append(df)
-				df = df_base.copy() #restore df for the next iteration
-
-			#----------------------------------
+		for face_index in range(len(df_result)):
+			box = df_result.loc[face_index, "box"]
+			name = df_result.loc[face_index, "name"]
+			# print(box, name)
+			if pd.isnull(name):
+				color = (0, 0, 255) # red box
+				cv2_img_boxes = functions.draw_box(cv2_img_boxes, box, color)
+			else:
+				color = (0, 255, 0) # green box
+				cv2_img_boxes = functions.draw_box(cv2_img_boxes, box, color, name)
 
 		toc = time.time()
-
 		print("find function lasts ",toc-tic," seconds")
-
-		if len(resp_obj) == 1:
-			return resp_obj[0]
-
-		return resp_obj
-
+		
+		return df_result, cv2_img_boxes
+	
 	else:
 		raise ValueError("Passed db_path does not exist!")
 
-	return None
+def _represent_no_detection(face_image, model):
+	"""
+	input:
+		face_image - the cv2 numpy array representing a face
+		model - the model used for face recognition
+	output:
+		embedding - the output vector of the model, representing the face
+	"""
+
+	#decide input shape
+	input_shape_x, input_shape_y = functions.find_input_shape(model)
+
+	#detect and align
+	face_vector = functions.preprocess_face_no_detection(img = face_image, target_size=(input_shape_y, input_shape_x))
+
+	#represent
+	embedding = model.predict(face_vector)[0].tolist()
+
+	return embedding
 
 def stream(db_path = '', model_name ='VGG-Face', distance_metric = 'cosine', enable_face_analysis = True, source = 0, time_threshold = 5, frame_threshold = 5):
 

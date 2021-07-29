@@ -168,7 +168,7 @@ def preprocess_face(img, target_size=(224, 224), grayscale = False, enforce_dete
 	else:
 		return img_pixels
 
-def detect_faces(img, detector_backend='opencv', grayscale=False, enforce_detection=False, align=True):
+def detect_faces(img, detector_backend='opencv', enforce_detection=False, align=True):
 	
 	# img_region = [0, 0, img.shape[0], img.shape[1]]
 
@@ -188,6 +188,13 @@ def detect_faces(img, detector_backend='opencv', grayscale=False, enforce_detect
 			raise ValueError("Faces could not be detected. Please confirm that the picture contains facess or consider to set enforce_detection param to False.")
 
 def preprocess_face_no_detection(img, target_size=(224, 224)):
+	"""
+	input:
+		img - cv2 processed numpy array representing the image
+		taget_size - the input size of the model
+	output:
+		the input vector for the model
+	"""
 
 	if img.shape[0] == 0 or img.shape[1] == 0:
 		raise ValueError("Detected face image shape is ", img.shape,". Cannot preprocess.")
@@ -241,7 +248,7 @@ def find_input_shape(model):
 
 	return input_shape
 
-def draw_box(img, box, color=(0,0,255), name="Unknown"):
+def draw_box(img, box, color=(0,127,255), name="Unknown"):
 	
 	x, y, w, h = box
 	x1 = x       # top left corner
@@ -255,15 +262,16 @@ def draw_box(img, box, color=(0,0,255), name="Unknown"):
 	x3 = x
 	y3 = y2 + 17
 	org = (x3, y3)
-	font = cv2.FONT_HERSHEY_SIMPLEX
-	img = cv2.putText(img, name, org, font, fontScale=.75, color=color, thickness=2, lineType=cv2.LINE_8)
+	font = cv2.FONT_HERSHEY_DUPLEX
+	img = cv2.putText(img, name, org, font, fontScale=.6, color=color, thickness=1, lineType=cv2.LINE_AA)
 
 	# fonts: https://www.oreilly.com/library/view/mastering-opencv-4/9781789344912/16b55e96-1027-4765-85d8-ced8fa071473.xhtml
+	# image for fonts: https://codeyarns.files.wordpress.com/2015/03/20150311_opencv_fonts.png
 	# linetypes: https://www.oreilly.com/library/view/mastering-opencv-4/9781789344912/5c4150d2-b550-40be-8b18-f2e71e20d9be.xhtml
 
 	return img
 
-def draw_boxes(img, boxes, color=(0,0,255)):
+def draw_boxes(img, boxes, color=(0,127,255)):
 
 	new_img = img.copy()
 
