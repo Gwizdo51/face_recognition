@@ -764,7 +764,7 @@ def find_faces(img_path, db_path, model_name ='VGG-Face', distance_metric = 'cos
 	# don't allow 'Ensemble' model
 	assert model_name != 'Ensemble', "Ensemble not implemented."
 	# only opencv as detector backend
-	assert detector_backend == 'opencv', "OpenCV is the only face detector implemented so far."
+	# assert detector_backend == 'opencv', "OpenCV is the only face detector implemented so far."
 
 	if os.path.isdir(db_path) == True:
 
@@ -817,7 +817,7 @@ def find_faces(img_path, db_path, model_name ='VGG-Face', distance_metric = 'cos
 
 			representations = []
 
-			print("len(employees) =", len(employees))
+			# print("len(employees) =", len(employees))
 			pbar = tqdm(range(0,len(employees)), desc='Finding representations', disable = disable_prog_bar)
 
 			#for employee in employees:

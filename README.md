@@ -19,8 +19,8 @@
     - output: the preprocessed array representing the face image
 - test it on opencv
 - add a function `_represent_no_detection` to DeepFace.py ***DONE***
-    - input:
-    - output:
+    - input: a cv2 image of a face and a model
+    - output: the embedding of the face
 - test it on opencv
 - add a function `draw_box` to functions.py ***DONE***
     - input: a cv2 image, a (x,y,w,h) box, a color and a name
