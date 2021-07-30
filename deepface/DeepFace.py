@@ -881,7 +881,7 @@ def find_faces(img_path, db_path, model_name ='VGG-Face', distance_metric = 'cos
 				df_result = pd.DataFrame(columns=["box", "name", "distance", "best_match_path"])
 				
 				# for every face detected ...
-				for face_img, img_region in tqdm(zip(detected_faces_images, img_regions_list), desc='Face', total=len(detected_faces_images), disable = not verbose):
+				for face_img, img_region in tqdm(zip(detected_faces_images, img_regions_list), desc='Analyzing faces', total=len(detected_faces_images), disable = not verbose):
 					# print(img_region)
 
 					# df will be filtered in each face. we will restore it for the next item.
