@@ -3,8 +3,6 @@ import gdown
 import bz2
 import os
 
-from numpy.core.records import recarray
-
 def build_model():
 
 	home = str(Path.home())

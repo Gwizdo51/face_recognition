@@ -73,25 +73,20 @@ def detect_faces(detector, img, align = True):
 
 	# print(faces)
 	# print(type(faces))
-	if len(faces) > 0:
 
-		# print(f"{len(faces)} faces found")
-		# img_regions_list = faces
+	# print(f"{len(faces)} faces found")
+	# img_regions_list = faces
 
-		for face in faces:
-			x,y,w,h = face
-			box = [x,y,w,h]
-			detected_face_img = img[int(y):int(y+h), int(x):int(x+w)]
+	for face in faces:
+		x,y,w,h = face
+		box = [x,y,w,h]
+		detected_face_img = img[int(y):int(y+h), int(x):int(x+w)]
 
-			if align:
-				detected_face_img = align_face(detector["eye_detector"], detected_face_img)
+		if align:
+			detected_face_img = align_face(detector["eye_detector"], detected_face_img)
 
-			img_regions_list.append(box)
-			detected_faces_images.append(detected_face_img)
-
-	else:
-		# print("no faces found")
-		pass
+		img_regions_list.append(box)
+		detected_faces_images.append(detected_face_img)
 	
 	# print(img_regions_list, type(img_regions_list))
 	return detected_faces_images, img_regions_list
