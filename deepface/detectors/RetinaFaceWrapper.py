@@ -26,17 +26,22 @@ def detect_faces(face_detector, img, align=True):
     img_regions_list = []
     
     from retinaface import RetinaFace
-    img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB) #retinaface expects RGB but OpenCV read BGR
 
-    face_imgs = RetinaFace.extract_faces(img_rgb, model=face_detector, align=align)
+    # RetinaFace expects RGB but OpenCV read BGR
+    img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
 
-    if len(face_imgs) > 0:
+    # store the RGB images of the faces detected by RetinaFace in a list
+    rgb_face_imgs = RetinaFace.extract_faces(img_rgb, model=face_detector, align=align)
+
+    # convert the images back to BGR
+    detected_faces_images = [cv2.cvtColor(rgb_face_img, cv2.COLOR_RGB2BGR) for rgb_face_img in rgb_face_imgs]
+
+    # create the boxes and add them to img_regions_list
+    if len(detected_faces_images) > 0:
         landmarks = RetinaFace.detect_faces(img_rgb, model=face_detector)
     
         for face_id in landmarks.keys():
 
-            # print(landmarks[face_id]["facial_area"])
-            # landmarks[face_id]["facial_area"] = [x1, y1, x2, y2]
             x1, y1, x2, y2 = landmarks[face_id]["facial_area"]
             x = x1
             y = y1
@@ -46,4 +51,4 @@ def detect_faces(face_detector, img, align=True):
 
             img_regions_list.append(box)
 
-    return face_imgs, img_regions_list
+    return detected_faces_images, img_regions_list
