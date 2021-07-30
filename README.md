@@ -17,16 +17,16 @@
 - add a function `preprocess_face_no_detection` to function.py ***DONE***
     - input: a cv2 face image and a target size
     - output: the preprocessed array representing the face image
-- test it on opencv
+- test it on opencv ***DONE***
 - add a function `_represent_no_detection` to DeepFace.py ***DONE***
     - input: a cv2 image of a face and a model
     - output: the embedding of the face
-- test it on opencv
+- test it on opencv ***DONE***
 - add a function `draw_box` to functions.py ***DONE***
     - input: a cv2 image, a (x,y,w,h) box, a color and a name
     - output: a cv2 with the box and the name drawn
 - test is on opencv ***DONE***
 - add a function `find_faces` to DeepFace.py ***DONE***
-- test it on opencv
+- test it on opencv ***DONE***
 
-modify more model wrappers if i can
+modify more model wrappers if i can ***DONE***
