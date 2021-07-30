@@ -752,7 +752,7 @@ def represent(img_path, model_name = 'VGG-Face', model = None, enforce_detection
 
 	return embedding
 
-def find_faces(img_path, db_path, model_name ='VGG-Face', distance_metric = 'cosine', model = None, enforce_detection = True, detector_backend = 'opencv', align = True, disable_prog_bar = True):
+def find_faces(img_path, db_path, model_name ='VGG-Face', distance_metric = 'cosine', model = None, enforce_detection = True, detector_backend = 'opencv', align = True, verbose = False, show_warnings=True):
 
 	tic = time.time()
 
@@ -772,7 +772,8 @@ def find_faces(img_path, db_path, model_name ='VGG-Face', distance_metric = 'cos
 			models[model_name] = model
 
 		else: #model != None
-			print("Already built model is passed")
+			if verbose:
+				print("Already built model is passed")
 
 			models = {}
 			models[model_name] = model
@@ -790,12 +791,14 @@ def find_faces(img_path, db_path, model_name ='VGG-Face', distance_metric = 'cos
 
 		if path.exists(db_path+"/"+file_name):
 
-			print("WARNING: Representations for images in", db_path, "folder were previously stored in", file_name + ". If you added new instances after this file creation, then please delete this file and call find function again. It will create it again.")
+			if show_warnings:
+				print("WARNING: Representations for images in", db_path, "folder were previously stored in", file_name + ". If you added new instances after this file creation, then please delete this file and call find function again. It will create it again.")
 
 			with open(db_path+'/'+file_name, 'rb') as f:
 				representations = pickle.load(f)
 
-			print("There are", len(representations), "representations found in", file_name)
+			if verbose:
+				print("There are", len(representations), "representations found in", file_name)
 
 		else: #create representation.pkl from scratch
 			# employees = exact_image_paths_list
@@ -816,7 +819,7 @@ def find_faces(img_path, db_path, model_name ='VGG-Face', distance_metric = 'cos
 			representations = []
 
 			# print("len(employees) =", len(employees))
-			pbar = tqdm(range(0,len(employees)), desc='Finding representations', disable = disable_prog_bar)
+			pbar = tqdm(range(len(employees)), desc='Finding representations', disable = not verbose)
 
 			#for employee in employees:
 			for index in pbar:
@@ -844,7 +847,8 @@ def find_faces(img_path, db_path, model_name ='VGG-Face', distance_metric = 'cos
 			with open(db_path+'/'+file_name, "wb") as f:
 				pickle.dump(representations, f)
 
-			print("Representations stored in", db_path + "/" + file_name, "file. Please delete this file when you add new identities in your database.")
+			if verbose:
+				print("Representations stored in", db_path + "/" + file_name, "file. Please delete this file when you add new identities in your database.")
 
 		#----------------------------
 		#now, we got representations for facial database
@@ -871,12 +875,13 @@ def find_faces(img_path, db_path, model_name ='VGG-Face', distance_metric = 'cos
 				detected_faces_images, img_regions_list = functions.detect_faces(
 					cv2_img, detector_backend=detector_backend, enforce_detection=False, align=align)
 
-				print(f"There are {len(detected_faces_images)} faces found on {img_path.split('/')[-1]}")
+				if verbose:
+					print(f"There are {len(detected_faces_images)} faces found on {img_path.split('/')[-1]}")
 
 				df_result = pd.DataFrame(columns=["box", "name", "distance", "best_match_path"])
 				
 				# for every face detected ...
-				for face_img, img_region in tqdm(zip(detected_faces_images, img_regions_list), desc='Face', disable = disable_prog_bar):
+				for face_img, img_region in tqdm(zip(detected_faces_images, img_regions_list), desc='Face', total=len(detected_faces_images), disable = not verbose):
 					# print(img_region)
 
 					# df will be filtered in each face. we will restore it for the next item.
@@ -944,7 +949,8 @@ def find_faces(img_path, db_path, model_name ='VGG-Face', distance_metric = 'cos
 				cv2_img_boxes = functions.draw_box(cv2_img_boxes, box, color, name)
 
 		toc = time.time()
-		print("find function lasts ",toc-tic," seconds")
+		if verbose:
+			print("find function lasts", toc-tic, "seconds")
 		
 		return df_result, cv2_img_boxes
 	
