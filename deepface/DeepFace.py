@@ -763,8 +763,6 @@ def find_faces(img_path, db_path, model_name ='VGG-Face', distance_metric = 'cos
 
 	# don't allow 'Ensemble' model
 	assert model_name != 'Ensemble', "Ensemble not implemented."
-	# only opencv as detector backend
-	# assert detector_backend == 'opencv', "OpenCV is the only face detector implemented so far."
 
 	if os.path.isdir(db_path) == True:
 
@@ -787,17 +785,17 @@ def find_faces(img_path, db_path, model_name ='VGG-Face', distance_metric = 'cos
 
 		#---------------------------------------
 
-		file_name = "representations_%s.pkl" % (model_name)
+		file_name = "representations_%s_%s.pkl" % (model_name, detector_backend)
 		file_name = file_name.replace("-", "_").lower()
 
 		if path.exists(db_path+"/"+file_name):
 
-			print("WARNING: Representations for images in ",db_path," folder were previously stored in ", file_name, ". If you added new instances after this file creation, then please delete this file and call find function again. It will create it again.")
+			print("WARNING: Representations for images in", db_path, "folder were previously stored in", file_name + ". If you added new instances after this file creation, then please delete this file and call find function again. It will create it again.")
 
 			with open(db_path+'/'+file_name, 'rb') as f:
 				representations = pickle.load(f)
 
-			print("There are ", len(representations)," representations found in ",file_name)
+			print("There are", len(representations), "representations found in", file_name)
 
 		else: #create representation.pkl from scratch
 			# employees = exact_image_paths_list
@@ -810,7 +808,7 @@ def find_faces(img_path, db_path, model_name ='VGG-Face', distance_metric = 'cos
 						employees.append(exact_path)
 
 			if len(employees) == 0:
-				raise ValueError("There is no image in ", db_path," folder! Validate .jpg or .png files exist in this path.")
+				raise ValueError("There is no image in", db_path, "folder! Validate .jpg or .png files exist in this path.")
 
 			#------------------------
 			#find representations for db images
@@ -846,7 +844,7 @@ def find_faces(img_path, db_path, model_name ='VGG-Face', distance_metric = 'cos
 			with open(db_path+'/'+file_name, "wb") as f:
 				pickle.dump(representations, f)
 
-			print("Representations stored in ",db_path,"/",file_name," file. Please delete this file when you add new identities in your database.")
+			print("Representations stored in", db_path + "/" + file_name, "file. Please delete this file when you add new identities in your database.")
 
 		#----------------------------
 		#now, we got representations for facial database
@@ -939,8 +937,8 @@ def find_faces(img_path, db_path, model_name ='VGG-Face', distance_metric = 'cos
 			name = df_result.loc[face_index, "name"]
 			# print(box, name)
 			if pd.isnull(name):
-				color = (0, 0, 255) # red box
-				cv2_img_boxes = functions.draw_box(cv2_img_boxes, box, color)
+				# color = (0, 0, 255) # red box
+				cv2_img_boxes = functions.draw_box(cv2_img_boxes, box)
 			else:
 				color = (0, 255, 0) # green box
 				cv2_img_boxes = functions.draw_box(cv2_img_boxes, box, color, name)
