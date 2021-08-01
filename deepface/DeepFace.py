@@ -752,37 +752,15 @@ def represent(img_path, model_name = 'VGG-Face', model = None, enforce_detection
 
 	return embedding
 
-def find_faces(img_path, db_path, model_name ='VGG-Face', distance_metric = 'cosine', model = None, enforce_detection = True, detector_backend = 'opencv', align = True, verbose = False, show_warnings=True):
+def load_representations(db_path, model_name, model, detector_backend, verbose=False, show_warnings=True):
 
-	tic = time.time()
-
-	# functions.initialize_input returns [img_path]
-	img_paths, bulkProcess = functions.initialize_input(img_path)
-
-	#-------------------------------
-
-	# don't allow 'Ensemble' model
-	assert model_name != 'Ensemble', "Ensemble not implemented."
+	if verbose:
+		print("load_representations is called")
 
 	if os.path.isdir(db_path) == True:
 
-		if model == None:
-			model = build_model(model_name)
-			models = {}
-			models[model_name] = model
-
-		else: #model != None
-			if verbose:
-				print("Already built model is passed")
-
-			models = {}
-			models[model_name] = model
-
-		#---------------------------------------
-
-		model_names = []; metric_names = []
+		model_names = []
 		model_names.append(model_name)
-		metric_names.append(distance_metric)
 
 		#---------------------------------------
 
@@ -829,12 +807,12 @@ def find_faces(img_path, db_path, model_name ='VGG-Face', distance_metric = 'cos
 				instance.append(employee)
 
 				for model_name in model_names:
-					custom_model = models[model_name]
+					custom_model = model
 
 					representation = represent(img_path = employee
 						, model_name = model_name, model = custom_model
-						, enforce_detection = enforce_detection, detector_backend = detector_backend
-						, align = align)
+						, enforce_detection = True, detector_backend = detector_backend
+						, align = True)
 
 					instance.append(representation)
 
@@ -849,6 +827,111 @@ def find_faces(img_path, db_path, model_name ='VGG-Face', distance_metric = 'cos
 
 			if verbose:
 				print("Representations stored in", db_path + "/" + file_name, "file. Please delete this file when you add new identities in your database.")
+
+		return representations
+
+	else:
+		raise ValueError("Passed db_path does not exist!")
+
+def find_faces(img_path, db_path, model_name='VGG-Face', distance_metric='cosine', model=None, detector_backend='opencv', representations = None, verbose=False, show_warnings=True):
+
+	tic = time.time()
+
+	# functions.initialize_input returns [img_path]
+	img_paths, bulkProcess = functions.initialize_input(img_path)
+
+	#-------------------------------
+
+	# don't allow 'Ensemble' model
+	assert model_name != 'Ensemble', "Ensemble not implemented."
+
+	if os.path.isdir(db_path) == True:
+
+		if model == None:
+			model = build_model(model_name)
+			models = {}
+			models[model_name] = model
+
+		else: #model != None
+			if verbose:
+				print("Already built model is passed")
+
+			models = {}
+			models[model_name] = model
+
+		#---------------------------------------
+
+		model_names = []; metric_names = []
+		model_names.append(model_name)
+		metric_names.append(distance_metric)
+
+		#---------------------------------------
+
+		if representations is None:
+
+			file_name = "representations_%s_%s.pkl" % (model_name, detector_backend)
+			file_name = file_name.replace("-", "_").lower()
+
+			if path.exists(db_path+"/"+file_name):
+
+				if show_warnings:
+					print("WARNING: Representations for images in", db_path, "folder were previously stored in", file_name + ". If you added new instances after this file creation, then please delete this file and call find function again. It will create it again.")
+
+				with open(db_path+'/'+file_name, 'rb') as f:
+					representations = pickle.load(f)
+
+				if verbose:
+					print("There are", len(representations), "representations found in", file_name)
+
+			else: #create representation.pkl from scratch
+				# employees = exact_image_paths_list
+				employees = []
+
+				for r, d, f in os.walk(db_path): # r=root, d=directories, f = files
+					for file in f:
+						if ('.jpg' in file.lower()) or ('.png' in file.lower()):
+							exact_path = r + "/" + file
+							employees.append(exact_path)
+
+				if len(employees) == 0:
+					raise ValueError("There is no image in", db_path, "folder! Validate .jpg or .png files exist in this path.")
+
+				#------------------------
+				#find representations for db images
+
+				representations = []
+
+				# print("len(employees) =", len(employees))
+				pbar = tqdm(range(len(employees)), desc='Finding representations', disable = not verbose)
+
+				#for employee in employees:
+				for index in pbar:
+					employee = employees[index]
+
+					instance = []
+					instance.append(employee)
+
+					for model_name in model_names:
+						custom_model = models[model_name]
+
+						representation = represent(img_path = employee
+							, model_name = model_name, model = custom_model
+							, enforce_detection = True, detector_backend = detector_backend
+							, align = True)
+
+						instance.append(representation)
+
+					#-------------------------------
+
+					representations.append(instance)
+
+				# at this point, representations = [[exact_path_image_1, image_1_representation], [exact_path image_2, image_2_representation], ...]
+
+				with open(db_path+'/'+file_name, "wb") as f:
+					pickle.dump(representations, f)
+
+				if verbose:
+					print("Representations stored in", db_path + "/" + file_name, "file. Please delete this file when you add new identities in your database.")
 
 		#----------------------------
 		#now, we got representations for facial database
@@ -873,7 +956,7 @@ def find_faces(img_path, db_path, model_name ='VGG-Face', distance_metric = 'cos
 				custom_model = models[model_name]
 
 				detected_faces_images, img_regions_list = functions.detect_faces(
-					cv2_img, detector_backend=detector_backend, enforce_detection=False, align=align)
+					cv2_img, detector_backend=detector_backend, enforce_detection=False, align=True)
 
 				if verbose:
 					print(f"There are {len(detected_faces_images)} faces found on {img_path.split('/')[-1]}")

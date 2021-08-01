@@ -28,5 +28,9 @@
 - test is on opencv ***DONE***
 - add a function `find_faces` to DeepFace.py ***DONE***
 - test it on opencv ***DONE***
+- add a funciton `load_representations` to DeepFace.py
+    - input: the path to a database, the names of the model and the detector
+    - output: the 'representations' list necessary for the find_faces function
+- test it
 
 modify more model wrappers if i can ***DONE***

@@ -12,3 +12,6 @@ Flask>=1.1.2
 mtcnn>=0.1.0
 lightgbm>=2.3.1
 retina-face>=0.0.1
+
+# django
+Django>=3.2.5
