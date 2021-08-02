@@ -4,10 +4,9 @@ Pipfile
 Pipfile.lock
 .mypy_cache/
 .vscode/
-.ipynb_checkpoints
+.ipynb_checkpoints/
 .idea/
 deepface.egg-info/
-tests/dataset/*.pkl
-.DS_Store
-deepface/.DS_Store
+*.pkl
+.DS_Stored
 __pycache__/
