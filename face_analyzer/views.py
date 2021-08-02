@@ -40,6 +40,8 @@ def test_show_lastest_uploaded_image(request):
 
 class Analyzer(View):
 
+    print("class Analyzer is instanciated")
+
     # from deepface import DeepFace
     # recog_model = DeepFace.build_model('Facenet')
     # 
@@ -59,10 +61,14 @@ class Analyzer(View):
             img_to_analyze = models.UploadedImages.objects.latest('id')
             print(img_to_analyze.uploaded_img.path)
             name = img_to_analyze.uploaded_img.path.split("/")[-1]
-            print(name)
-            print(img_to_analyze.img_name)
+            # print(name)
+            # print(img_to_analyze.img_name)
             img_to_analyze.img_name = name
             img_to_analyze.save()
+
+
+
+            # img_to_analyze.delete()
             
             context = {"uploaded_image": img_to_analyze.uploaded_img}
             return render(request, "home/show_uploaded_image.html", context)
