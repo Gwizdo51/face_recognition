@@ -1,0 +1,16 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>{% block title %}Default Title{% endblock %}</title>
+        <link rel="stylesheet" type="text/css" href="{% static "css/app.css" %}">
+        {% block stylesheet %}{% endblock %}
+    </head>
+    <body>
+        {% block body %}
+        {% endblock %}
+        <!-- <img alt="test image" src="{% static "images/test02.jpg" %}"> -->
+    </body>
+    <p></p>
+</html>
