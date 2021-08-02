@@ -10,5 +10,4 @@ deepface.egg-info/
 tests/dataset/*.pkl
 .DS_Store
 deepface/.DS_Store
-*/__pycache__/
-*/*/__pycache__/
+__pycache__/
