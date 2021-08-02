@@ -4,6 +4,7 @@ from numpy.random import randint, choice
 import time
 from django.conf import settings
 from django.views import View
+from pathlib import Path
 
 from . import forms, models
 
@@ -42,9 +43,21 @@ class Analyzer(View):
 
     print("class Analyzer is instanciated")
 
-    # from deepface import DeepFace
-    # recog_model = DeepFace.build_model('Facenet')
-    # 
+    from deepface import DeepFace
+    model_name = 'Facenet'
+    recog_model = DeepFace.build_model('Facenet')
+    detector = 'mtcnn'
+    representations = DeepFace.load_representations(
+        db_path=settings.BASE_DIR / "database",
+        model_name=model_name,
+        model=recog_model,
+        detector_backend=detector,
+        verbose=True
+    )
+
+    # print((settings.BASE_DIR / "database").is_dir())
+    # print(settings.BASE_DIR)
+    # print(Path.cwd())
     
     def get(self, request):
         form = forms.ImageForm()
