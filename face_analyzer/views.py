@@ -5,6 +5,10 @@ import time
 from django.conf import settings
 from django.views import View
 from pathlib import Path
+import cv2
+import os
+
+from deepface import DeepFace
 
 from . import forms, models
 
@@ -42,13 +46,11 @@ def test_show_lastest_uploaded_image(request):
 class Analyzer(View):
 
     print("class Analyzer is instanciated")
-
-    from deepface import DeepFace
     model_name = 'Facenet'
     recog_model = DeepFace.build_model('Facenet')
     detector = 'mtcnn'
     representations = DeepFace.load_representations(
-        db_path=settings.BASE_DIR / "database",
+        db_path=str(settings.BASE_DIR / "database"),
         model_name=model_name,
         model=recog_model,
         detector_backend=detector,
@@ -71,17 +73,52 @@ class Analyzer(View):
             
             form.save()
 
-            img_to_analyze = models.UploadedImages.objects.latest('id')
-            print(img_to_analyze.uploaded_img.path)
-            name = img_to_analyze.uploaded_img.path.split("/")[-1]
+            images = models.UploadedImages.objects.latest('id')
+            print("#######################################")
+            print(images.uploaded_img.url)
+            name = images.uploaded_img.path.split("/")[-1]
             # print(name)
             # print(img_to_analyze.img_name)
-            img_to_analyze.img_name = name
-            img_to_analyze.save()
+            images.img_name = name
 
+            # load the image with cv2
+            # print(img_to_analyze.uploaded_img.url)
+            # cv2_img = cv2.imread("./" + img_to_analyze.uploaded_img.url)
+            
+            # print(cv2_img.shape)
+            # cv2.imshow('uploaded_img', cv2_img)
+            # cv2.waitKey(0)
+            # cv2.destroyAllWindows()
 
+            # analyze the image with find_faces
+            df, analyzed_img = DeepFace.find_faces(
+                img_path="./" + images.uploaded_img.url,
+                db_path=str(settings.BASE_DIR / "database"),
+                model_name=self.model_name,
+                model=self.recog_model,
+                detector_backend=self.detector,
+                representations=self.representations,
+                verbose=True
+            )
+            print(df)
+
+            cv2.imshow('analyzed_img', analyzed_img)
+            cv2.waitKey(0)
+            cv2.destroyAllWindows()
+
+            # save the analyzed image to media/analyzed_images
+            # analysed_images_dir_path = Path(settings.MEDIA_ROOT / "analyzed_images")
+            # if not Path(settings.MEDIA_ROOT / "analyzed_images").is_dir():
+            #     print("no analyzed_images directory yet in media, creating")
+            #     os.mkdir(path=Path(settings.MEDIA_ROOT / "analyzed_images"))
+
+            # upload the analyzed image to the database (or not ?)
+            # print(str(Path(images.uploaded_img.url).parent.parent / "analyzed_images" / images.img_name))
+            images.save()
 
             # img_to_analyze.delete()
             
-            context = {"uploaded_image": img_to_analyze.uploaded_img}
+
+            # analyzed_img_url = str(Path(images.uploaded_img.url).parent.parent / "analyzed_images" / images.img_name)
+            context = {"uploaded_image": images.uploaded_img}
             return render(request, "home/show_uploaded_image.html", context)
