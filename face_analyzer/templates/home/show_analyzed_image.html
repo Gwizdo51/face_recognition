@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block stylesheet %}
+<style>
+    img.center {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+    }
+</style>
+{% endblock %}
+
+{% block title %}Image analyzed{% endblock %}
+
+{% block body %}
+<h1 align="center">Result when compared to the database</h1>
+<img src="{{ analyzed_img_url }}" style="width:60%" class="center"/>
+<p align="center">
+    <a href="/face_recognition/">upload another image</a>
+</p>
+<!-- {% load static %}
+<img alt="test image" src="{% static "images/test02.jpg" %}"> -->
+{% endblock  %}

@@ -62,6 +62,7 @@ class Analyzer(View):
     # print(Path.cwd())
     
     def get(self, request):
+
         form = forms.ImageForm()
         return render(request, 'home/index.html', {'form': form})
 
@@ -77,13 +78,11 @@ class Analyzer(View):
             print("#######################################")
             print(images.uploaded_img.url)
             name = images.uploaded_img.path.split("/")[-1]
-            # print(name)
-            # print(img_to_analyze.img_name)
             images.img_name = name
 
             # load the image with cv2
-            # print(img_to_analyze.uploaded_img.url)
-            # cv2_img = cv2.imread("./" + img_to_analyze.uploaded_img.url)
+            # print(images.uploaded_img.url)
+            # cv2_img = cv2.imread("./" + images.uploaded_img.url)
             
             # print(cv2_img.shape)
             # cv2.imshow('uploaded_img', cv2_img)
@@ -100,25 +99,26 @@ class Analyzer(View):
                 representations=self.representations,
                 verbose=True
             )
-            print(df)
+            # print(df)
 
-            cv2.imshow('analyzed_img', analyzed_img)
-            cv2.waitKey(0)
-            cv2.destroyAllWindows()
+            # cv2.imshow('analyzed_img', analyzed_img)
+            # cv2.waitKey(0)
+            # cv2.destroyAllWindows()
 
             # save the analyzed image to media/analyzed_images
-            # analysed_images_dir_path = Path(settings.MEDIA_ROOT / "analyzed_images")
-            # if not Path(settings.MEDIA_ROOT / "analyzed_images").is_dir():
-            #     print("no analyzed_images directory yet in media, creating")
-            #     os.mkdir(path=Path(settings.MEDIA_ROOT / "analyzed_images"))
+            analysed_images_dir_path = Path(settings.MEDIA_ROOT / "analyzed_images")
+            # print(str(analysed_images_dir_path))
+            if not Path(settings.MEDIA_ROOT / "analyzed_images").is_dir():
+                print("no analyzed_images directory yet in media, creating")
+                os.mkdir(path=Path(settings.MEDIA_ROOT / "analyzed_images"))
+            cv2.imwrite(str(analysed_images_dir_path / name), analyzed_img)
 
-            # upload the analyzed image to the database (or not ?)
-            # print(str(Path(images.uploaded_img.url).parent.parent / "analyzed_images" / images.img_name))
             images.save()
+            # return HttpResponse('tests')
 
-            # img_to_analyze.delete()
-            
+            # print(settings.MEDIA_URL + "analyzed_images/" + name)
+            analyzed_img_url = settings.MEDIA_URL + "analyzed_images/" + name
 
             # analyzed_img_url = str(Path(images.uploaded_img.url).parent.parent / "analyzed_images" / images.img_name)
-            context = {"uploaded_image": images.uploaded_img}
-            return render(request, "home/show_uploaded_image.html", context)
+            context = {"analyzed_img_url": analyzed_img_url}
+            return render(request, "home/show_analyzed_image.html", context)
