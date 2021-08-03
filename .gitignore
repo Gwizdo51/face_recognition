@@ -10,6 +10,7 @@ deepface.egg-info/
 *.pkl
 .DS_Stored
 __pycache__/
+/*.ipynb
 
 db.sqlite3
 /media/
