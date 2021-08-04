@@ -20,7 +20,8 @@ from django.conf import settings
 from django.shortcuts import redirect
 
 urlpatterns = [
-    path('', lambda req: redirect('/face_recognition/')),
+    # path('', lambda req: redirect('/face_recognition/')),
+    path('', include('face_analyzer.urls')),
     path('admin/', admin.site.urls),
-    path('face_recognition/', include('face_analyzer.urls'))
+    # path('face_recognition/', include('face_analyzer.urls'))
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

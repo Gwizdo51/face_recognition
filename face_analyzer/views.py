@@ -8,7 +8,10 @@ from pathlib import Path
 import cv2
 import os
 
+import pandas as pd
+print("loading deepface ...")
 from deepface import DeepFace
+print("deepface is loaded")
 
 from . import forms, models
 
@@ -38,16 +41,18 @@ def upload_img(request):
         form = forms.ImageForm()
     return render(request, 'home/index.html', {'form': form})
 
-def test_show_lastest_uploaded_image(request):
-    uploaded_img = models.UploadedImages.objects.latest('id')
-    context = {"uploaded_image": uploaded_img}
-    return render(request, "home/show_uploaded_image.html", context)
+def clear_cached_files(request):
+
+    print()
+
+    return render(request, "home/cleared_cached_files.html")
 
 class Analyzer(View):
 
-    print("class Analyzer is instanciated")
+    # 'VGG-Face', VGG-Face', 'OpenFace', 'Facenet', 'Facenet512', 'DeepFace', 'DeepID', 'Dlib', 'ArcFace', 'Emotion', 'Age', 'Gender', 'Race'
     model_name = 'Facenet'
     recog_model = DeepFace.build_model('Facenet')
+    # 'opencv', 'ssd', 'dlib', 'mtcnn', 'retinaface'
     detector = 'mtcnn'
     representations = DeepFace.load_representations(
         db_path=str(settings.BASE_DIR / "database"),
@@ -74,11 +79,13 @@ class Analyzer(View):
             
             form.save()
 
-            images = models.UploadedImages.objects.latest('id')
-            print("#######################################")
-            print(images.uploaded_img.url)
-            name = images.uploaded_img.path.split("/")[-1]
-            images.img_name = name
+            image_db = models.UploadedImages.objects.latest('id')
+            # print("#######################################")
+            # print(repr(Path(image_db.uploaded_img.path).name))
+            name = Path(image_db.uploaded_img.path).name
+            image_db.img_name = name
+            # image_db.save()
+            # return HttpResponse('tests')
 
             # load the image with cv2
             # print(images.uploaded_img.url)
@@ -91,7 +98,7 @@ class Analyzer(View):
 
             # analyze the image with find_faces
             df, analyzed_img = DeepFace.find_faces(
-                img_path="./" + images.uploaded_img.url,
+                img_path=str(Path(image_db.uploaded_img.path)),
                 db_path=str(settings.BASE_DIR / "database"),
                 model_name=self.model_name,
                 model=self.recog_model,
@@ -99,7 +106,7 @@ class Analyzer(View):
                 representations=self.representations,
                 verbose=True
             )
-            # print(df)
+            print(df)
 
             # cv2.imshow('analyzed_img', analyzed_img)
             # cv2.waitKey(0)
@@ -113,7 +120,7 @@ class Analyzer(View):
                 os.mkdir(path=Path(settings.MEDIA_ROOT / "analyzed_images"))
             cv2.imwrite(str(analysed_images_dir_path / name), analyzed_img)
 
-            images.save()
+            image_db.save()
             # return HttpResponse('tests')
 
             # print(settings.MEDIA_URL + "analyzed_images/" + name)
