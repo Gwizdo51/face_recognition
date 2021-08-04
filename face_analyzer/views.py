@@ -48,16 +48,9 @@ def clear_cached_files(request):
     media_folder_path = Path.cwd() / "media"
     print(str(media_folder_path))
     if media_folder_path.is_dir():
-        print("media dir exists")
         shutil.rmtree(path=media_folder_path)
-    else:
-        print("media dir doesn't exist")
-        pass
 
     # delete all entries in the model
-    img_entries = models.UploadedImages.objects.all()
-    print(len(img_entries))
-    print(type(img_entries))
     for img_entry in models.UploadedImages.objects.all():
         print(img_entry)
         img_entry.delete()
