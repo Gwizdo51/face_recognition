@@ -14,7 +14,5 @@ urlpatterns = [
     path('', views.index),
     path('last_analyzed_image/', views.last_analyzed_image),
     # path('', views.upload_img),
-    path('cached_files_cleared/', views.clear_cached_files),
-    path('compute/', views.random_int),
-    path('apitest/<username>', views.api_test)
+    path('cached_files_cleared/', views.clear_cached_files)
 ]

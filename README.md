@@ -2,8 +2,8 @@
 
 ## TODO
 
-- implement `DeepFaceWrapper` to handle the DeepFace module for Django. <u>**DONE & TESTED**</u>
-- add a `last_analyzed_image` url, view and html <u>**DONE & TESTED**</u>
+- implement `DeepFaceWrapper` to handle the DeepFace module for Django. <ins>**DONE & TESTED**</ins>
+- add a `last_analyzed_image` url, view and html <ins>**DONE & TESTED**</ins>
 - add a HTML response for when the database is empty
 - correct bug to `df_result` on Windows
 - modify `DeepFace.py` so that it analizes the image and draw the boxes separately
@@ -15,6 +15,3 @@
         - if the client is known and allowed in, draw green box
         - if the client is known and not allowed in, draw red box
 - add a css page to group all common styles
-
-<u>**underlined text**</u><br>
-<ins>underlined text too</ins>
