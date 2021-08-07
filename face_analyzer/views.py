@@ -118,14 +118,14 @@ def last_analyzed_image(request):
 
     try:
         last_image_db = models.UploadedImages.objects.latest('id')
+
+        name = last_image_db.img_name
+        last_analyzed_img_url = settings.MEDIA_URL + "analyzed_images/" + name
+        context = {"analyzed_img_url": last_analyzed_img_url, "db_is_empty": False}
+
     except models.UploadedImages.DoesNotExist:
-        return HttpResponse('nothing in database')
+        context = {"db_is_empty": True}
 
-    print(last_image_db)
-    name = last_image_db.img_name
-
-    last_analyzed_img_url = settings.MEDIA_URL + "analyzed_images/" + name
-    context = {"analyzed_img_url": last_analyzed_img_url}
     return render(request, "home/show_last_analyzed_image.html", context)
 
 
