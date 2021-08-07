@@ -11,9 +11,9 @@ import os
 import shutil
 
 import pandas as pd
-print("loading deepface ...")
+print("loading DeepFace ...")
 from deepface import DeepFace
-print("deepface is loaded")
+print("DeepFace is loaded")
 
 from . import forms, models
 
@@ -56,7 +56,8 @@ class DeepFaceWrapper:
     @classmethod
     def analyze_uploaded_img(cls):
         """
-        This method 
+        This method analyses the last uploaded image using DeepFace, and saves 
+        the analyzed image in MEDIA_ROOT/analyzed_images
         """
 
         # get the last uploaded image from the model UploadedImages
@@ -66,7 +67,7 @@ class DeepFaceWrapper:
         name = Path(image_db.uploaded_img.path).name
         image_db.img_name = name
         
-        # analyze the image using DeepFace module
+        # analyze the image using the DeepFace module
         df_result, analyzed_img = DeepFace.find_faces(
             img_path=str(Path(image_db.uploaded_img.path)),
             db_path=str(settings.BASE_DIR / "database"),
