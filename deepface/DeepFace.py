@@ -4,7 +4,6 @@ if __name__ == "__main__":
 		sys.path.insert(0, '/media/arthur/DATA/Code/projects/16_facial_recognition/face_recognition_project_simplon')
 	# '/media/arthur/DATA/Code/projects/16_facial_recognition/face_recognition_project_simplon'
 
-import pathlib
 import warnings
 warnings.filterwarnings("ignore")
 

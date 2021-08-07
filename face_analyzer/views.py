@@ -46,7 +46,7 @@ class DeepFaceWrapper:
     # 'opencv', 'ssd', 'dlib', 'mtcnn', 'retinaface'
     detector = 'mtcnn'
     representations = DeepFace.load_representations(
-        db_path=str(settings.BASE_DIR / "database"),
+        db_path=settings.BASE_DIR / "database",
         model_name=model_name,
         model=recog_model,
         detector_backend=detector,
@@ -69,7 +69,7 @@ class DeepFaceWrapper:
         
         # analyze the image using the DeepFace module
         df_result, analyzed_img = DeepFace.find_faces(
-            img_path=str(Path(image_db.uploaded_img.path)),
+            img_path=Path(image_db.uploaded_img.path),
             db_path=str(settings.BASE_DIR / "database"),
             model_name=cls.model_name,
             model=cls.recog_model,
