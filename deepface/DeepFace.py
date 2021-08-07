@@ -960,7 +960,7 @@ def find_faces(img_path, db_path, model_name='VGG-Face', distance_metric='cosine
 
 		cv2_img_boxes = cv2_img.copy()
 
-		for face_index in range(len(df_result)):
+		for face_index in df_result.index:
 			box = df_result.loc[face_index, "box"]
 			name = df_result.loc[face_index, "name"]
 			# print(box, name)

@@ -13,6 +13,7 @@ import shutil
 import pandas as pd
 print("loading DeepFace ...")
 from deepface import DeepFace
+from deepface.commons import functions
 print("DeepFace is loaded")
 
 from . import forms, models

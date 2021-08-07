@@ -281,6 +281,8 @@ def draw_boxes(img, boxes, color=(0,127,255)):
 
 	return new_img
 
+def resize_img_to_target_size():
+	raise NotImplementedError
 
 if __name__ == "__main__":
 	pass
