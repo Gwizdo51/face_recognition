@@ -2,35 +2,19 @@
 
 ## TODO
 
-- add a function `detect_faces` to OpenCvWrapper.py ***DONE***<br>
-- test it ***DONE***
-- add a function `draw_boxes` to functions.py (test function for now) ***DONE***
-    - input: a cv2 image array, the regions on which to draw the boxes and a color
-    - output: a cv2 image with the boxes drawn
-- test it ***DONE***
-- add a function `detect_faces` to FaceDetector.py ***DONE***
-- test it on opencv ***DONE***
-- add a function `detect_faces` to functions.py ***DONE***
-    - input: a cv2 image array and a detector name
-    - output: the list of all faces found as numpy arrays, and a list of all boxes (x,y,w,h) around the faces found on the original image
-- test it on opencv ***DONE***
-- add a function `preprocess_face_no_detection` to function.py ***DONE***
-    - input: a cv2 face image and a target size
-    - output: the preprocessed array representing the face image
-- test it on opencv ***DONE***
-- add a function `_represent_no_detection` to DeepFace.py ***DONE***
-    - input: a cv2 image of a face and a model
-    - output: the embedding of the face
-- test it on opencv ***DONE***
-- add a function `draw_box` to functions.py ***DONE***
-    - input: a cv2 image, a (x,y,w,h) box, a color and a name
-    - output: a cv2 with the box and the name drawn
-- test is on opencv ***DONE***
-- add a function `find_faces` to DeepFace.py ***DONE***
-- test it on opencv ***DONE***
-- add a funciton `load_representations` to DeepFace.py
-    - input: the path to a database, the names of the model and the detector
-    - output: the 'representations' list necessary for the find_faces function
-- test it
+- implement `DeepFaceWrapper` to handle the DeepFace module for Django. <u>**DONE & TESTED**</u>
+- add a `last_analyzed_image` url, view and html <u>**DONE & TESTED**</u>
+- add a HTML response for when the database is empty
+- correct bug to `df_result` on Windows
+- modify `DeepFace.py` so that it analizes the image and draw the boxes separately
+- post process `df_result` to compare it to a database of client, and draw green or red squares on the analyzed image based on whether they are allowed in or not
+    - add a model `registered_clients`
+    - fill the model with examples
+    - for each row of `df_result`:
+        - if the face is unknown, draw orange box
+        - if the client is known and allowed in, draw green box
+        - if the client is known and not allowed in, draw red box
+- add a css page to group all common styles
 
-modify more model wrappers if i can ***DONE***
+<u>**underlined text**</u><br>
+<ins>underlined text too</ins>

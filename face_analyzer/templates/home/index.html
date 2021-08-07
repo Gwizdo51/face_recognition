@@ -16,15 +16,18 @@
         text-align: center;
     }
     div.column {
-    float: left;
-    width: 50%;
-    padding: 5px;
+        float: left;
+        width: 50%;
+        padding: 5px;
     }
     /* Clearfix (clear floats) */
     div.row::after {
-    content: "";
-    clear: both;
-    display: table;
+        content: "";
+        clear: both;
+        display: table;
+    }
+    body {
+        font-size: 125%;
     }
 </style>
 {% endblock %}
@@ -53,6 +56,9 @@ and other stuff</p> -->
     </form>
 </div>
 <p align="center">
-    <a href="/cached_files_cleared/"><b>Delete the cached images</b></a>
+    <a href="/last_analyzed_image/">Show last uploaded image results</a>
+</p>
+<p align="center">
+    <a href="/cached_files_cleared/">Delete the cached images</a>
 </p>
 {% endblock  %}
