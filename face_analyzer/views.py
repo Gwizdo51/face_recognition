@@ -1,10 +1,9 @@
-from functools import reduce
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, JsonResponse
 from numpy.random import randint, choice
-import time
+# import time
 from django.conf import settings
-from django.views import View
+# from django.views import View
 from pathlib import Path
 import cv2
 import os
@@ -22,10 +21,10 @@ from . import forms, models
 def clear_cached_files(request):
 
     # delete media directory
-    media_folder_path = Path.cwd() / "media"
-    print(str(media_folder_path))
-    if media_folder_path.is_dir():
-        shutil.rmtree(path=media_folder_path)
+    media_dir_path = settings.MEDIA_ROOT
+    # print(str(media_folder_path))
+    if media_dir_path.is_dir():
+        shutil.rmtree(path=media_dir_path)
 
     # delete all entries in the model
     for img_entry in models.UploadedImages.objects.all():
@@ -83,9 +82,9 @@ class DeepFaceWrapper:
         # save the analyzed image in MEDIA_ROOT/analyzed_images
         # (create the directory if it doesn't exist)
         analyzed_images_dir_path = Path(settings.MEDIA_ROOT / "analyzed_images")
-        if not Path(settings.MEDIA_ROOT / "analyzed_images").is_dir():
+        if not analyzed_images_dir_path.is_dir():
             print("no analyzed_images directory yet in media, creating")
-            os.mkdir(path=Path(settings.MEDIA_ROOT / "analyzed_images"))
+            os.mkdir(path=analyzed_images_dir_path)
         cv2.imwrite(str(analyzed_images_dir_path / name), analyzed_img)
 
         # save the model
