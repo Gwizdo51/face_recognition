@@ -128,15 +128,15 @@ def preprocess_face(img, target_size=(224, 224), grayscale = False, enforce_dete
 	#post-processing
 	if grayscale == True:
 		img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-	
+
 	#---------------------------------------------------
 	#resize image to expected shape
 
 	# img = cv2.resize(img, target_size) #resize causes transformation on base image, adding black pixels to resize will not deform the base image
-	
+
 	# First resize the longer side to the target size
 	#factor = target_size[0] / max(img.shape)
-	
+
 	factor_0 = target_size[0] / img.shape[0]
 	factor_1 = target_size[1] / img.shape[1]
 	factor = min(factor_0, factor_1)
@@ -152,13 +152,13 @@ def preprocess_face(img, target_size=(224, 224), grayscale = False, enforce_dete
 		img = np.pad(img, ((diff_0 // 2, diff_0 - diff_0 // 2), (diff_1 // 2, diff_1 - diff_1 // 2), (0, 0)), 'constant')
 	else:
 		img = np.pad(img, ((diff_0 // 2, diff_0 - diff_0 // 2), (diff_1 // 2, diff_1 - diff_1 // 2)), 'constant')
-	
+
 	#double check: if target image is not still the same size with target.
 	if img.shape[0:2] != target_size:
 		img = cv2.resize(img, target_size)
-	
+
 	#---------------------------------------------------
-	
+
 	img_pixels = image.img_to_array(img)
 	img_pixels = np.expand_dims(img_pixels, axis = 0)
 	img_pixels /= 255 #normalize input in [0, 1]
@@ -169,7 +169,7 @@ def preprocess_face(img, target_size=(224, 224), grayscale = False, enforce_dete
 		return img_pixels
 
 def detect_faces(img, detector_backend='opencv', enforce_detection=False, align=True):
-	
+
 	# img_region = [0, 0, img.shape[0], img.shape[1]]
 
 	#detector stored in a global variable in FaceDetector object.
@@ -198,15 +198,15 @@ def preprocess_face_no_detection(img, target_size=(224, 224)):
 
 	if img.shape[0] == 0 or img.shape[1] == 0:
 		raise ValueError("Detected face image shape is ", img.shape,". Cannot preprocess.")
-	
+
 	#---------------------------------------------------
 	#resize image to expected shape
 
 	# img = cv2.resize(img, target_size) #resize causes transformation on base image, adding black pixels to resize will not deform the base image
-	
+
 	# First resize the longer side to the target size
 	#factor = target_size[0] / max(img.shape)
-	
+
 	factor_0 = target_size[0] / img.shape[0]
 	factor_1 = target_size[1] / img.shape[1]
 	factor = min(factor_0, factor_1)
@@ -218,13 +218,13 @@ def preprocess_face_no_detection(img, target_size=(224, 224)):
 	diff_0 = target_size[0] - img.shape[0]
 	diff_1 = target_size[1] - img.shape[1]
 	img = np.pad(img, ((diff_0 // 2, diff_0 - diff_0 // 2), (diff_1 // 2, diff_1 - diff_1 // 2), (0, 0)), 'constant')
-	
+
 	#double check: if target image is not still the same size with target.
 	if img.shape[0:2] != target_size:
 		img = cv2.resize(img, target_size)
-	
+
 	#---------------------------------------------------
-	
+
 	img_pixels = image.img_to_array(img)
 	img_pixels = np.expand_dims(img_pixels, axis = 0)
 	img_pixels /= 255 #normalize input in [0, 1]
@@ -249,7 +249,7 @@ def find_input_shape(model):
 	return input_shape
 
 def draw_box(img, box, color=(0,127,255), name="Unknown"):
-	
+
 	x, y, w, h = box
 	x1 = x       # top left corner
 	y1 = y

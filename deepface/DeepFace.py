@@ -914,7 +914,7 @@ def find_faces(img_path, db_path, model_name='VGG-Face', distance_metric='cosine
 
 			# compute the representation of the face by the model
 			face_representation = _represent_no_detection(face_image=face_img, model=model)
-				
+
 			# compute the distance between both representations
 			distances = []
 			for db_index in range(len(df_face)):
@@ -929,7 +929,7 @@ def find_faces(img_path, db_path, model_name='VGG-Face', distance_metric='cosine
 					raise ValueError("Please enter a correct distance metric.")
 				# print("index:", db_index, ", distance:", distance)
 				distances.append(distance)
-			
+
 			# add the distances to df_face and drop the representations
 			df_face["distance"] = pd.Series(distances)
 			df_face = df_face.drop(columns="representation")
@@ -938,7 +938,7 @@ def find_faces(img_path, db_path, model_name='VGG-Face', distance_metric='cosine
 			threshold = dst.findThreshold(model_name, distance_metric)
 			# print(threshold)
 			df_face = df_face.loc[df_face["distance"] <= threshold]
-			
+
 			# sort the values by ascending distance
 			df_face = df_face.sort_values(by="distance", ascending=True)
 
@@ -974,9 +974,9 @@ def find_faces(img_path, db_path, model_name='VGG-Face', distance_metric='cosine
 		toc = time.time()
 		if verbose:
 			print("find function lasts", toc-tic, "seconds")
-		
+
 		return df_result, cv2_img_boxes
-	
+
 	else:
 		raise ValueError("Passed db_path does not exist!")
 
