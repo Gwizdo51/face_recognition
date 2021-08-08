@@ -281,8 +281,22 @@ def draw_boxes(img, boxes, color=(0,127,255)):
 
 	return new_img
 
-def resize_img_to_target_size():
-	raise NotImplementedError
+def resize_img_to_target_size(img_to_resize, target_width=1000, target_height=750):
+	"""
+	This function either upscales or downscales the input image so that
+	it meets the target size, while preserving its original aspect ratio.
+	The resized image width and height will either be equal or smaller than
+	the target width and height.
+	"""
+
+	ratio_x = target_width / img_to_resize.shape[1]
+	ratio_y = target_height / img_to_resize.shape[0]
+	ratio = min(ratio_x, ratio_y)
+
+	resized_img = cv2.resize(img_to_resize, (0,0), fx=ratio, fy=ratio)
+
+	return resized_img
+
 
 if __name__ == "__main__":
 	pass
