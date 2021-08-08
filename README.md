@@ -9,7 +9,7 @@
 - add `functions.resize_img_to_target_size` to resize a cv2 image to a target size <ins>**DONE & TESTED**</ins>
 - modify `DeepFace.py` so that it analizes the image and draw the boxes separately
 - post process `df_result` to compare it to a database of client, and draw green or red squares on the analyzed image based on whether they are allowed in or not
-    - add a model `registered_clients`
+    - add a model `registered_clients` <ins>**DONE & TESTED**</ins>
     - fill the model with examples
     - for each row of `df_result`:
         - if the face is unknown, draw orange box
