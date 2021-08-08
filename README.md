@@ -15,4 +15,5 @@
         - if the face is unknown, draw orange box
         - if the client is known and allowed in, draw green box
         - if the client is known and not allowed in, draw red box
+- add post-process of `df_result` to display informations regarding the clients on `/last_analyzed_image/`
 - add a css page to group all common styles

@@ -1,6 +1,6 @@
 from django.db import models
 # from datetime import date
-from django.utils import timezone
+from django.utils.timezone import now
 
 
 class UploadedImages(models.Model):
@@ -17,9 +17,9 @@ class ClientDB(models.Model):
     This model is a mock database of known clients and details about them.
     """
     client_name = models.CharField(max_length=50, unique=True)
-    age = models.PositiveSmallIntegerField(default=0)
+    date_of_birth = models.DateField(null=True)
     VIP = models.BooleanField(default=False)
     is_allowed_in = models.BooleanField(default=True)
     comments = models.CharField(max_length=500, default="")
     total_entry_tickets_bought = models.PositiveSmallIntegerField(default=0)
-    creation_date = models.DateField(default=timezone.now)
+    creation_date = models.DateField(default=now)
