@@ -551,22 +551,31 @@ def InceptionResNetV2(dimension = 128):
 #url = 'https://drive.google.com/uc?id=1971Xk5RwedbudGgTIrGAL4F7Aifu7id1'
 
 def loadModel(url = 'https://github.com/serengil/deepface_models/releases/download/v1.0/facenet_weights.h5'):
+
 	model = InceptionResNetV2()
 
 	#-----------------------------------
 
-	home = str(Path.home())
+	# home = str(Path.home())
 
-	if os.path.isfile(home+'/.deepface/weights/facenet_weights.h5') != True:
-		print("facenet_weights.h5 will be downloaded...")
+	# if os.path.isfile(home+'/.deepface/weights/facenet_weights.h5') != True:
+	# 	print("facenet_weights.h5 will be downloaded...")
 
-		output = home+'/.deepface/weights/facenet_weights.h5'
-		gdown.download(url, output, quiet=False)
+	# 	output = home+'/.deepface/weights/facenet_weights.h5'
+	# 	gdown.download(url, output, quiet=False)
+
+	# #-----------------------------------
+
+	# model.load_weights(home+'/.deepface/weights/facenet_weights.h5')
 
 	#-----------------------------------
 
-	model.load_weights(home+'/.deepface/weights/facenet_weights.h5')
+	model_weights_path = Path(__file__).resolve().parent.parent / "model_weights" / 'facenet_weights.h5'
 
-	#-----------------------------------
+	if not model_weights_path.is_file():
+		print("downloading facenet_weights.h5...")
+		gdown.download(url, str(model_weights_path), quiet=False)
+
+	model.load_weights(str(model_weights_path))
 
 	return model

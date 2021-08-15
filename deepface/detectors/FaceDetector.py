@@ -2,11 +2,14 @@ from deepface.detectors import OpenCvWrapper, SsdWrapper, DlibWrapper, MtcnnWrap
 from PIL import Image
 import math
 import numpy as np
-from deepface.commons import distance
+from deepface.commons import distance, functions
+
 
 def build_model(detector_backend):
 
     global face_detector_obj #singleton design pattern
+
+    functions.initialize_weights_folder()
 
     backends = {
         'opencv': OpenCvWrapper.build_model,
@@ -31,6 +34,7 @@ def build_model(detector_backend):
 
     return face_detector_obj[detector_backend]
 
+
 def detect_face(face_detector, detector_backend, img, align = True):
 
     backends = {
@@ -50,6 +54,7 @@ def detect_face(face_detector, detector_backend, img, align = True):
 
     return face, region
 
+
 def detect_faces(face_detector, detector_backend, img, align = True):
     
     backends = {
@@ -68,6 +73,7 @@ def detect_faces(face_detector, detector_backend, img, align = True):
         raise ValueError("invalid detector_backend passed - " + detector_backend)
 
     return detected_faces_images, img_regions_list
+
 
 def alignment_procedure(img, left_eye, right_eye):
 

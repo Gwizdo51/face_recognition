@@ -41,14 +41,22 @@ def loadModel(url = 'https://github.com/serengil/deepface_models/releases/downlo
 
 	#---------------------------------
 
-	home = str(Path.home())
+	# home = str(Path.home())
 
-	if os.path.isfile(home+'/.deepface/weights/deepid_keras_weights.h5') != True:
-		print("deepid_keras_weights.h5 will be downloaded...")
+	# if os.path.isfile(home+'/.deepface/weights/deepid_keras_weights.h5') != True:
+	# 	print("deepid_keras_weights.h5 will be downloaded...")
 
-		output = home+'/.deepface/weights/deepid_keras_weights.h5'
-		gdown.download(url, output, quiet=False)
+	# 	output = home+'/.deepface/weights/deepid_keras_weights.h5'
+	# 	gdown.download(url, output, quiet=False)
 
-	model.load_weights(home+'/.deepface/weights/deepid_keras_weights.h5')
+	# model.load_weights(home+'/.deepface/weights/deepid_keras_weights.h5')
+
+	model_weights_path = Path(__file__).resolve().parent.parent / "model_weights" / 'deepid_keras_weights.h5'
+
+	if not model_weights_path.is_file():
+		print("downloading deepid_keras_weights.h5...")
+		gdown.download(url, str(model_weights_path), quiet=False)
+	
+	model.load_weights(str(model_weights_path))
 
 	return model

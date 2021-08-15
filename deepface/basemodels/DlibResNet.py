@@ -6,41 +6,57 @@ import numpy as np
 from pathlib import Path
 
 class DlibResNet:
-	
+
 	def __init__(self):
-		
+
 		#this is not a must dependency
 		import dlib #19.20.0
-	
+
 		self.layers = [DlibMetaData()]
-		
+
 		#---------------------
-		
-		home = str(Path.home())
-		weight_file = home+'/.deepface/weights/dlib_face_recognition_resnet_model_v1.dat'
-		
-		#---------------------
-		
+
+		# home = str(Path.home())
+		# weight_file = home+'/.deepface/weights/dlib_face_recognition_resnet_model_v1.dat'
+
+		# #---------------------
+
+		# #download pre-trained model if it does not exist
+		# if os.path.isfile(weight_file) != True:
+		# 	print("dlib_face_recognition_resnet_model_v1.dat is going to be downloaded")  
+
+		# 	url = "http://dlib.net/files/dlib_face_recognition_resnet_model_v1.dat.bz2"
+		# 	output = home+'/.deepface/weights/'+url.split("/")[-1]
+		# 	gdown.download(url, output, quiet=False)
+
+		# 	zipfile = bz2.BZ2File(output)
+		# 	data = zipfile.read()
+		# 	newfilepath = output[:-4] #discard .bz2 extension
+		# 	open(newfilepath, 'wb').write(data)
+
+		# #---------------------
+
+		# model = dlib.face_recognition_model_v1(weight_file)
+		# self.__model = model
+
+		model_weights_path = Path(__file__).resolve().parent.parent / "model_weights" / 'dlib_face_recognition_resnet_model_v1.dat'
+
 		#download pre-trained model if it does not exist
-		if os.path.isfile(weight_file) != True:
-			print("dlib_face_recognition_resnet_model_v1.dat is going to be downloaded")  
-			
+		if not model_weights_path.is_file():
+			print("downloading dlib_face_recognition_resnet_model_v1.dat...")  
+
 			url = "http://dlib.net/files/dlib_face_recognition_resnet_model_v1.dat.bz2"
-			output = home+'/.deepface/weights/'+url.split("/")[-1]
-			gdown.download(url, output, quiet=False)
-			
-			zipfile = bz2.BZ2File(output)
-			data = zipfile.read()
-			newfilepath = output[:-4] #discard .bz2 extension
-			open(newfilepath, 'wb').write(data)
-			
-		#---------------------
-		
-		model = dlib.face_recognition_model_v1(weight_file)
+			model_weights_zip_path = model_weights_path.parent / url.split("/")[-1]
+			gdown.download(url, str(model_weights_zip_path), quiet=False)
+
+			zip_file = bz2.BZ2File(str(model_weights_zip_path))
+			data = zip_file.read()
+			with open(model_weights_path, 'wb') as f:
+				f.write(data)
+
+		model = dlib.face_recognition_model_v1(str(model_weights_path))
 		self.__model = model
-		
-		#---------------------
-		
+
 		return None #classes must return None
 	
 	def predict(self, img_aligned):

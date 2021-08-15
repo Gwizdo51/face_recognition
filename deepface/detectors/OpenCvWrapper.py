@@ -1,9 +1,3 @@
-if __name__ == "__main__":
-	import sys
-	if '/media/arthur/DATA/Code/projects/16_facial_recognition/face_recognition_project_simplon' not in sys.path:
-		sys.path.insert(0, '/media/arthur/DATA/Code/projects/16_facial_recognition/face_recognition_project_simplon')
-	# '/media/arthur/DATA/Code/projects/16_facial_recognition/face_recognition_project_simplon'
-
 import cv2
 import os
 import pandas as pd
@@ -141,6 +135,3 @@ def get_opencv_path():
 		path = path + "/" + folder
 
 	return path+"/data/"
-
-if __name__ == "__main__":
-	print('/media/arthur/DATA/Code/projects/16_facial_recognition/face_recognition_project_simplon' not in sys.path)

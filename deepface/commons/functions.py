@@ -3,6 +3,7 @@ if __name__ == "__main__":
 	if '/media/arthur/DATA/Code/projects/16_facial_recognition/face_recognition_project_simplon' not in sys.path:
 		sys.path.insert(0, '/media/arthur/DATA/Code/projects/16_facial_recognition/face_recognition_project_simplon')
 
+import deepface
 import os
 import numpy as np
 import pandas as pd
@@ -46,17 +47,24 @@ def initialize_input(img1_path, img2_path = None):
 
 	return img_list, bulkProcess
 
-def initializeFolder():
+def initialize_weights_folder():
 
-	home = str(Path.home())
+	# home = str(Path.home())
 
-	if not os.path.exists(home+"/.deepface"):
-		os.mkdir(home+"/.deepface")
-		print("Directory ",home,"/.deepface created")
+	# if not os.path.exists(home+"/.deepface"):
+	# 	os.mkdir(home+"/.deepface")
+	# 	print("Directory ",home,"/.deepface created")
 
-	if not os.path.exists(home+"/.deepface/weights"):
-		os.mkdir(home+"/.deepface/weights")
-		print("Directory ",home,"/.deepface/weights created")
+	# if not os.path.exists(home+"/.deepface/weights"):
+	# 	os.mkdir(home+"/.deepface/weights")
+	# 	print("Directory ",home,"/.deepface/weights created")
+
+	model_weights_dir_path = Path(__file__).resolve().parent.parent / "model_weights"
+	# print(deepface_weights_path)
+
+	if not model_weights_dir_path.is_dir() :
+		os.mkdir(model_weights_dir_path)
+		print("model weights directory created")
 
 def loadBase64Img(uri):
    encoded_data = uri.split(',')[1]
@@ -172,9 +180,10 @@ def detect_faces(img, detector_backend='opencv', enforce_detection=False, align=
 
 	# img_region = [0, 0, img.shape[0], img.shape[1]]
 
-	#detector stored in a global variable in FaceDetector object.
-	#this call should be completed very fast because it will return found in memory
-	#it will not build face detector model in each call (consider for loops)
+	# detector stored in a global variable in FaceDetector object.
+	# this call should be completed very fast because it will return found in memory
+	# it will not build face detector model in each call (consider for loops)
+
 	face_detector = FaceDetector.build_model(detector_backend)
 
 	detected_faces_images, img_regions_list = FaceDetector.detect_faces(face_detector, detector_backend, img, align)

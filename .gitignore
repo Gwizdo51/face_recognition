@@ -14,3 +14,4 @@ __pycache__/
 /dev_notebook.ipynb
 db.sqlite3
 /media/
+model_weights/

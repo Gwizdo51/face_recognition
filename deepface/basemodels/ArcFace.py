@@ -26,19 +26,27 @@ def loadModel(url = 'https://github.com/serengil/deepface_models/releases/downlo
 	#---------------------------------------
 	#check the availability of pre-trained weights
 
-	home = str(Path.home())
+	# home = str(Path.home())
 
-	file_name = "arcface_weights.h5"
-	output = home+'/.deepface/weights/'+file_name
+	# file_name = "arcface_weights.h5"
+	# output = home+'/.deepface/weights/'+file_name
 
-	if os.path.isfile(output) != True:
+	# if os.path.isfile(output) != True:
 
-		print(file_name," will be downloaded to ",output)
-		gdown.download(url, output, quiet=False)
+	# 	print(file_name," will be downloaded to ",output)
+	# 	gdown.download(url, output, quiet=False)
 
-	#---------------------------------------
+	# #---------------------------------------
 	
-	model.load_weights(output)
+	# model.load_weights(output)
+
+	model_weights_path = Path(__file__).resolve().parent.parent / "model_weights" / 'arcface_weights.h5'
+
+	if not model_weights_path.is_file():
+		print("downloading arcface_weights.h5...")
+		gdown.download(url, str(model_weights_path), quiet=False)
+	
+	model.load_weights(str(model_weights_path))
 
 	return model
 

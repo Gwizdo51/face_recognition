@@ -41,6 +41,7 @@ def build_model(model_name):
 	Returns:
 		built deepface model
 	"""
+	functions.initialize_weights_folder()
 
 	global model_obj #singleton design pattern
 
@@ -1052,8 +1053,11 @@ def detectFace(img_path, detector_backend = 'opencv', enforce_detection = True):
 #---------------------------
 #main
 
-functions.initializeFolder()
+# functions.initializeFolder()
+
 
 if __name__ == "__main__":
 	
-	print("hello world!")
+	# print("hello world!")
+	pass
+	functions.initialize_weights_folder()

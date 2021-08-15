@@ -71,18 +71,24 @@ def loadModel(url = 'https://github.com/serengil/deepface_models/releases/downlo
 
 	#-----------------------------------
 
-	home = str(Path.home())
-	output = home+'/.deepface/weights/vgg_face_weights.h5'
+	# home = str(Path.home())
+	# output = home+'/.deepface/weights/vgg_face_weights.h5'
 
-	if os.path.isfile(output) != True:
-		print("vgg_face_weights.h5 will be downloaded...")
-		gdown.download(url, output, quiet=False)
+	# if os.path.isfile(output) != True:
+	# 	print("vgg_face_weights.h5 will be downloaded...")
+	# 	gdown.download(url, output, quiet=False)
 
-	#-----------------------------------
+	# #-----------------------------------
 	
-	model.load_weights(output)
+	# model.load_weights(output)
 
-	#-----------------------------------
+	model_weights_path = Path(__file__).resolve().parent.parent / "model_weights" / 'vgg_face_weights.h5'
+
+	if not model_weights_path.is_file():
+		print("downloading vgg_face_weights.h5...")
+		gdown.download(url, str(model_weights_path), quiet=False)
+	
+	model.load_weights(str(model_weights_path))
 
 	#TO-DO: why?
 	vgg_face_descriptor = Model(inputs=model.layers[0].input, outputs=model.layers[-2].output)
