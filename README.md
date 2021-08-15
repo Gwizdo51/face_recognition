@@ -19,3 +19,23 @@
         - if the client is known and not allowed in, draw red box
 - add post-process of `df_result` to display informations regarding the clients on `/last_analyzed_image/`
 - add a css page to group all common styles
+
+## How to install with anaconda
+
+(works on both Linux and Windows)
+
+- clone the repository on your machine
+- create a new virtual environment with **python 3.9**
+- activate it
+- `conda install -c conda-forge dlib`
+- go the root of the repository
+- `pip install -r requirements.txt`
+
+## How to use
+
+- go the root of the repository
+- create the sqlite database file: `python manage.py migrate`<br>
+this step might take a while as deepface will load and create representations for all the faces in the database directory.
+- add fake informations about fake clients: `python manage.py shell < create_client_db.py`
+- run the django server: `python manage.py runserver`
+- go to the url created by django and enjoy
