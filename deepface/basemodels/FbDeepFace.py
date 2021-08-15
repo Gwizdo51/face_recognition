@@ -9,7 +9,7 @@ from tensorflow.keras.layers import Convolution2D, LocallyConnected2D, MaxPoolin
 
 #-------------------------------------
 
-def loadModel(url = 'https://github.com/swghosh/DeepFace/releases/download/weights-vggface2-2d-aligned/VGGFace2_DeepFace_weights_val-0.9034.h5.zip'):
+def loadModel():
 	base_model = Sequential()
 	base_model.add(Convolution2D(32, (11, 11), activation='relu', name='C1', input_shape=(152, 152, 3)))
 	base_model.add(MaxPooling2D(pool_size=3, strides=2, padding='same', name='M2'))
@@ -44,13 +44,15 @@ def loadModel(url = 'https://github.com/swghosh/DeepFace/releases/download/weigh
 	if not model_weights_path.is_file():
 		print("downloading VGGFace2_DeepFace_weights_val-0.9034.h5...")
 
-		model_weights_zip_path = model_weights_path.parent / "VGGFace2_DeepFace_weights_val-0.9034.h5.zip"
-
+		url = 'https://github.com/swghosh/DeepFace/releases/download/weights-vggface2-2d-aligned/VGGFace2_DeepFace_weights_val-0.9034.h5.zip'
+		model_weights_zip_path = model_weights_path.parent / url.split("/")[-1]
 		gdown.download(url, str(model_weights_zip_path), quiet=False)
 
 		# unzip VGGFace2_DeepFace_weights_val-0.9034.h5.zip
 		with zipfile.ZipFile(str(model_weights_zip_path), 'r') as zip_ref:
 			zip_ref.extractall(str(model_weights_zip_path.parent))
+	
+	base_model.load_weights(str(model_weights_path))
 
 	#drop F8 and D0. F7 is the representation layer.
 	deepface_model = Model(inputs=base_model.layers[0].input, outputs=base_model.layers[-3].output)

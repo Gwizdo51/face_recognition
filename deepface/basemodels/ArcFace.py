@@ -12,7 +12,7 @@ import gdown
 
 #url = "https://drive.google.com/uc?id=1LVB3CdVejpmGHM28BpqqkbZP5hDEcdZY"
 
-def loadModel(url = 'https://github.com/serengil/deepface_models/releases/download/v1.0/arcface_weights.h5'):
+def loadModel():
 	base_model = ResNet34()
 	inputs = base_model.inputs[0]
 	arcface_model = base_model.outputs[0]
@@ -44,6 +44,7 @@ def loadModel(url = 'https://github.com/serengil/deepface_models/releases/downlo
 
 	if not model_weights_path.is_file():
 		print("downloading arcface_weights.h5...")
+		url = 'https://github.com/serengil/deepface_models/releases/download/v1.0/arcface_weights.h5'
 		gdown.download(url, str(model_weights_path), quiet=False)
 	
 	model.load_weights(str(model_weights_path))

@@ -65,7 +65,7 @@ def baseModel():
 
 #url = 'https://drive.google.com/uc?id=1CPSeum3HpopfomUEK1gybeuIVoeJT_Eo'
 
-def loadModel(url = 'https://github.com/serengil/deepface_models/releases/download/v1.0/vgg_face_weights.h5'):
+def loadModel():
 
 	model = baseModel()
 
@@ -86,6 +86,7 @@ def loadModel(url = 'https://github.com/serengil/deepface_models/releases/downlo
 
 	if not model_weights_path.is_file():
 		print("downloading vgg_face_weights.h5...")
+		url = 'https://github.com/serengil/deepface_models/releases/download/v1.0/vgg_face_weights.h5'
 		gdown.download(url, str(model_weights_path), quiet=False)
 	
 	model.load_weights(str(model_weights_path))

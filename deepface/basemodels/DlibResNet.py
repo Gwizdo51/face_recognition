@@ -46,10 +46,10 @@ class DlibResNet:
 			print("downloading dlib_face_recognition_resnet_model_v1.dat...")  
 
 			url = "http://dlib.net/files/dlib_face_recognition_resnet_model_v1.dat.bz2"
-			model_weights_zip_path = model_weights_path.parent / url.split("/")[-1]
-			gdown.download(url, str(model_weights_zip_path), quiet=False)
+			model_weights_bz2_path = model_weights_path.parent / url.split("/")[-1]
+			gdown.download(url, str(model_weights_bz2_path), quiet=False)
 
-			zip_file = bz2.BZ2File(str(model_weights_zip_path))
+			zip_file = bz2.BZ2File(str(model_weights_bz2_path))
 			data = zip_file.read()
 			with open(model_weights_path, 'wb') as f:
 				f.write(data)

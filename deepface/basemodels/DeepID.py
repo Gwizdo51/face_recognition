@@ -11,7 +11,7 @@ from tensorflow.keras.layers import Conv2D, Activation, Input, Add, MaxPooling2D
 
 #url = 'https://drive.google.com/uc?id=1uRLtBCTQQAvHJ_KVrdbRJiCKxU8m5q2J'
 
-def loadModel(url = 'https://github.com/serengil/deepface_models/releases/download/v1.0/deepid_keras_weights.h5'):
+def loadModel():
 
 	myInput = Input(shape=(55, 47, 3))
 
@@ -55,6 +55,7 @@ def loadModel(url = 'https://github.com/serengil/deepface_models/releases/downlo
 
 	if not model_weights_path.is_file():
 		print("downloading deepid_keras_weights.h5...")
+		url = 'https://github.com/serengil/deepface_models/releases/download/v1.0/deepid_keras_weights.h5'
 		gdown.download(url, str(model_weights_path), quiet=False)
 	
 	model.load_weights(str(model_weights_path))

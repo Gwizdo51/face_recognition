@@ -550,7 +550,7 @@ def InceptionResNetV2(dimension = 128):
 
 #url = 'https://drive.google.com/uc?id=1971Xk5RwedbudGgTIrGAL4F7Aifu7id1'
 
-def loadModel(url = 'https://github.com/serengil/deepface_models/releases/download/v1.0/facenet_weights.h5'):
+def loadModel():
 
 	model = InceptionResNetV2()
 
@@ -574,6 +574,7 @@ def loadModel(url = 'https://github.com/serengil/deepface_models/releases/downlo
 
 	if not model_weights_path.is_file():
 		print("downloading facenet_weights.h5...")
+		url = 'https://github.com/serengil/deepface_models/releases/download/v1.0/facenet_weights.h5'
 		gdown.download(url, str(model_weights_path), quiet=False)
 
 	model.load_weights(str(model_weights_path))
