@@ -15,37 +15,45 @@ else:
 
 def load_weights(model):
 
-    home = str(Path.home())
-    exact_file = home+'/.deepface/weights/retinaface.h5'
-    #url = 'https://drive.google.com/file/d/1K3Eq2k1b9dpKkucZjPAiCCnNzfCMosK4'
-    #url = 'https://drive.google.com/uc?id=1K3Eq2k1b9dpKkucZjPAiCCnNzfCMosK4'
-    url = 'https://github.com/serengil/deepface_models/releases/download/v1.0/retinaface.h5'
+    # home = str(Path.home())
+    # exact_file = home+'/.deepface/weights/retinaface.h5'
+    # #url = 'https://drive.google.com/file/d/1K3Eq2k1b9dpKkucZjPAiCCnNzfCMosK4'
+    # #url = 'https://drive.google.com/uc?id=1K3Eq2k1b9dpKkucZjPAiCCnNzfCMosK4'
+    # url = 'https://github.com/serengil/deepface_models/releases/download/v1.0/retinaface.h5'
 
-    #-----------------------------
+    # #-----------------------------
 
-    if not os.path.exists(home+"/.deepface"):
-        os.mkdir(home+"/.deepface")
-        print("Directory ",home,"/.deepface created")
+    # if not os.path.exists(home+"/.deepface"):
+    #     os.mkdir(home+"/.deepface")
+    #     print("Directory ",home,"/.deepface created")
 
-    if not os.path.exists(home+"/.deepface/weights"):
-        os.mkdir(home+"/.deepface/weights")
-        print("Directory ",home,"/.deepface/weights created")
+    # if not os.path.exists(home+"/.deepface/weights"):
+    #     os.mkdir(home+"/.deepface/weights")
+    #     print("Directory ",home,"/.deepface/weights created")
 
-    #-----------------------------
+    # #-----------------------------
 
-    if os.path.isfile(exact_file) != True:
-        print("retinaface.h5 will be downloaded from the url "+url)
-        gdown.download(url, exact_file, quiet=False)
+    # if os.path.isfile(exact_file) != True:
+    #     print("retinaface.h5 will be downloaded from the url "+url)
+    #     gdown.download(url, exact_file, quiet=False)
 
-    #-----------------------------
+    # #-----------------------------
 
-    #gdown should download the pretrained weights here. If it does not still exist, then throw an exception.
-    if os.path.isfile(exact_file) != True:
-        raise ValueError("Pre-trained weight could not be loaded!"
-            +" You might try to download the pre-trained weights from the url "+ url
-            + " and copy it to the ", exact_file, "manually.")
+    # #gdown should download the pretrained weights here. If it does not still exist, then throw an exception.
+    # if os.path.isfile(exact_file) != True:
+    #     raise ValueError("Pre-trained weight could not be loaded!"
+    #         +" You might try to download the pre-trained weights from the url "+ url
+    #         + " and copy it to the ", exact_file, "manually.")
 
-    model.load_weights(exact_file)
+    # place the weights in deepface too
+    model_weights_path = Path(__file__).resolve().parent.parent.parent / "deepface" / "model_weights" / 'retinaface.h5'
+
+    if not model_weights_path.is_file():
+        print("downloading retinaface.h5...")
+        url = 'https://github.com/serengil/deepface_models/releases/download/v1.0/retinaface.h5'
+        gdown.download(url, str(model_weights_path), quiet=False)
+
+    model.load_weights(str(model_weights_path))
 
     return model
 
