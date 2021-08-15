@@ -37,7 +37,7 @@ def loadModel():
     #     gdown.download(url, output, quiet=False)
 
     # #---------------------------------------
-    
+
     # model.load_weights(output)
 
     model_weights_path = Path(__file__).resolve().parent.parent / "model_weights" / 'arcface_weights.h5'
@@ -46,7 +46,7 @@ def loadModel():
         print("downloading arcface_weights.h5...")
         url = 'https://github.com/serengil/deepface_models/releases/download/v1.0/arcface_weights.h5'
         gdown.download(url, str(model_weights_path), quiet=False)
-    
+
     model.load_weights(str(model_weights_path))
 
     return model

@@ -57,7 +57,7 @@ def loadModel():
         print("downloading deepid_keras_weights.h5...")
         url = 'https://github.com/serengil/deepface_models/releases/download/v1.0/deepid_keras_weights.h5'
         gdown.download(url, str(model_weights_path), quiet=False)
-    
+
     model.load_weights(str(model_weights_path))
 
     return model

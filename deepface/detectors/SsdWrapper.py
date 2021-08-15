@@ -46,12 +46,12 @@ def build_model():
         print("downloading deploy.prototxt...")
         url = "https://github.com/opencv/opencv/raw/3.4.0/samples/dnn/face_detector/deploy.prototxt"
         gdown.download(url, str(model_structure_path), quiet=False)
-    
+
     if not model_weights_path.is_file():
         print("downloading res10_300x300_ssd_iter_140000.caffemodel...")
         url = "https://github.com/opencv/opencv_3rdparty/raw/dnn_samples_face_detector_20170830/res10_300x300_ssd_iter_140000.caffemodel"
         gdown.download(url, str(model_weights_path), quiet=False)
-    
+
     face_detector = cv2.dnn.readNetFromCaffe(
         str(model_structure_path),
         str(model_weights_path)

@@ -30,7 +30,7 @@ def detect_face(face_detector, img, align = True):
     return detected_face, img_region
 
 def detect_faces(face_detector, img, align = True):
-    
+
     detected_faces_images = []
     img_regions_list = []
 
@@ -49,8 +49,8 @@ def detect_faces(face_detector, img, align = True):
 
         if align:
             detected_face_img = FaceDetector.alignment_procedure(detected_face_img, left_eye, right_eye)
-        
+
         img_regions_list.append(box)
         detected_faces_images.append(detected_face_img)
-    
+
     return detected_faces_images, img_regions_list

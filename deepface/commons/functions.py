@@ -148,7 +148,7 @@ def preprocess_face(img, target_size=(224, 224), grayscale = False, enforce_dete
     factor_0 = target_size[0] / img.shape[0]
     factor_1 = target_size[1] / img.shape[1]
     factor = min(factor_0, factor_1)
-    
+
     dsize = (int(img.shape[1] * factor), int(img.shape[0] * factor))
     img = cv2.resize(img, dsize)
 
@@ -219,7 +219,7 @@ def preprocess_face_no_detection(img, target_size=(224, 224)):
     factor_0 = target_size[0] / img.shape[0]
     factor_1 = target_size[1] / img.shape[1]
     factor = min(factor_0, factor_1)
-    
+
     dsize = (int(img.shape[1] * factor), int(img.shape[0] * factor))
     img = cv2.resize(img, dsize)
 

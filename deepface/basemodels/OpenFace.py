@@ -229,7 +229,7 @@ def loadModel():
 
     # Final Model
     model = Model(inputs=[myInput], outputs=norm_layer)
-    
+
     #-----------------------------------
 
     # home = str(Path.home())

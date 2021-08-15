@@ -56,7 +56,7 @@ class DeepFaceWrapper:
     @classmethod
     def analyze_uploaded_img(cls):
         """
-        This method analyses the last uploaded image using DeepFace, and saves 
+        This method analyses the last uploaded image using DeepFace, and saves
         the analyzed image in MEDIA_ROOT/analyzed_images
         """
 
@@ -66,7 +66,7 @@ class DeepFaceWrapper:
         # put the name of the image in the model
         name = Path(image_db.uploaded_img.path).name
         image_db.img_name = name
-        
+
         # analyze the image using the DeepFace module
         df_result, analyzed_img = DeepFace.find_faces(
             img_path=Path(image_db.uploaded_img.path),
@@ -148,7 +148,7 @@ def last_analyzed_image(request):
 #     # print((settings.BASE_DIR / "database").is_dir())
 #     # print(settings.BASE_DIR)
 #     # print(Path.cwd())
-    
+
 
 #     def get(self, request):
 
@@ -161,7 +161,7 @@ def last_analyzed_image(request):
 #         form = forms.ImageForm(request.POST, request.FILES)
 
 #         if form.is_valid():
-            
+
 #             form.save()
 
 #             image_db = models.UploadedImages.objects.latest('id')
@@ -175,7 +175,7 @@ def last_analyzed_image(request):
 #             # load the image with cv2
 #             # print(images.uploaded_img.url)
 #             # cv2_img = cv2.imread("./" + images.uploaded_img.url)
-            
+
 #             # print(cv2_img.shape)
 #             # cv2.imshow('uploaded_img', cv2_img)
 #             # cv2.waitKey(0)

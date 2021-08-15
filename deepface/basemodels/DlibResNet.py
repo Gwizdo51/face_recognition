@@ -23,7 +23,7 @@ class DlibResNet:
 
         # #download pre-trained model if it does not exist
         # if os.path.isfile(weight_file) != True:
-        #     print("dlib_face_recognition_resnet_model_v1.dat is going to be downloaded")  
+        #     print("dlib_face_recognition_resnet_model_v1.dat is going to be downloaded")
 
         #     url = "http://dlib.net/files/dlib_face_recognition_resnet_model_v1.dat.bz2"
         #     output = home+'/.deepface/weights/'+url.split("/")[-1]
@@ -43,7 +43,7 @@ class DlibResNet:
 
         #download pre-trained model if it does not exist
         if not model_weights_path.is_file():
-            print("downloading dlib_face_recognition_resnet_model_v1.dat...")  
+            print("downloading dlib_face_recognition_resnet_model_v1.dat...")
 
             url = "http://dlib.net/files/dlib_face_recognition_resnet_model_v1.dat.bz2"
             model_weights_bz2_path = model_weights_path.parent / url.split("/")[-1]
@@ -58,29 +58,29 @@ class DlibResNet:
         self.__model = model
 
         return None #classes must return None
-    
+
     def predict(self, img_aligned):
-        
+
         #functions.detectFace returns 4 dimensional images
         if len(img_aligned.shape) == 4:
             img_aligned = img_aligned[0]
-        
+
         #functions.detectFace returns bgr images
         img_aligned = img_aligned[:,:,::-1] #bgr to rgb
-        
+
         #deepface.detectFace returns an array in scale of [0, 1] but dlib expects in scale of [0, 255]
         if img_aligned.max() <= 1:
             img_aligned = img_aligned * 255
-        
+
         img_aligned = img_aligned.astype(np.uint8)
-        
+
         model = self.__model
-        
+
         img_representation = model.compute_face_descriptor(img_aligned)
-        
+
         img_representation = np.array(img_representation)
         img_representation = np.expand_dims(img_representation, axis = 0)
-        
+
         return img_representation
 
 class DlibMetaData:

@@ -24,7 +24,7 @@ def l2_normalize(x):
 def findThreshold(model_name, distance_metric):
 
     base_threshold = {'cosine': 0.40, 'euclidean': 0.55, 'euclidean_l2': 0.75}
-    
+
     # thresholds = {
     #     'VGG-Face': {'cosine': 0.40, 'euclidean': 0.55, 'euclidean_l2': 0.75},
     #     'OpenFace': {'cosine': 0.10, 'euclidean': 0.55, 'euclidean_l2': 0.55},

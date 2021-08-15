@@ -43,7 +43,7 @@ def build_model():
         data = bz2_file.read()
         with open(model_weights_path, 'wb') as f:
             f.write(data)
-    
+
     face_detector = dlib.get_frontal_face_detector()
     sp = dlib.shape_predictor(str(model_weights_path))
 
@@ -82,7 +82,7 @@ def detect_face(detector, img, align = True):
     return detected_face, img_region
 
 def detect_faces(detector, img, align = True):
-    
+
     import dlib #this requirement is not a must that's why imported here
 
     home = str(Path.home())
@@ -97,7 +97,7 @@ def detect_faces(detector, img, align = True):
     # detections is of type _dlib_pybind11.rectangles, and made of _dlib_pybind11.rectangle
 
     for rectangle in detections:
-        
+
         left = rectangle.left()
         right = rectangle.right()
         top = rectangle.top()
@@ -109,8 +109,8 @@ def detect_faces(detector, img, align = True):
         if align:
             img_shape = sp(img, rectangle)
             detected_face_img = dlib.get_face_chip(img, img_shape, size = detected_face_img.shape[0])
-        
+
         detected_faces_images.append(detected_face_img)
         img_regions_list.append(box)
-    
+
     return detected_faces_images, img_regions_list

@@ -51,7 +51,7 @@ def loadModel():
         # unzip VGGFace2_DeepFace_weights_val-0.9034.h5.zip
         with zipfile.ZipFile(str(model_weights_zip_path), 'r') as zip_ref:
             zip_ref.extractall(str(model_weights_zip_path.parent))
-    
+
     base_model.load_weights(str(model_weights_path))
 
     #drop F8 and D0. F7 is the representation layer.

@@ -56,7 +56,7 @@ def detect_face(face_detector, detector_backend, img, align = True):
 
 
 def detect_faces(face_detector, detector_backend, img, align = True):
-    
+
     backends = {
         'opencv': OpenCvWrapper.detect_faces,
         'ssd': SsdWrapper.detect_faces,

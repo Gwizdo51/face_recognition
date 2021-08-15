@@ -879,7 +879,7 @@ def find_faces(img_path, db_path, model_name='VGG-Face', distance_metric='cosine
         # load or create the representations for the database
         if representations is None:
             representations = load_representations(db_path=db_path, model_name=model_name, model=model, detector_backend=detector_backend, verbose=verbose, show_warnings=show_warnings)
-            
+
         #----------------------------
 
         # create a pandas Dataframe to contain the data from representations
@@ -904,7 +904,7 @@ def find_faces(img_path, db_path, model_name='VGG-Face', distance_metric='cosine
             print(f"There are {len(detected_faces_images)} faces found on {img_path.name}")
 
         df_result = pd.DataFrame(columns=["box", "name", "distance", "best_match_path"])
-        
+
         # for every face detected ...
         for face_img, img_region in tqdm(zip(detected_faces_images, img_regions_list), desc='Analyzing faces', total=len(detected_faces_images), disable = not verbose):
             # print(img_region)
@@ -1056,7 +1056,7 @@ def detectFace(img_path, detector_backend = 'opencv', enforce_detection = True):
 
 
 if __name__ == "__main__":
-    
+
     # print("hello world!")
     pass
     functions.initialize_weights_folder()
