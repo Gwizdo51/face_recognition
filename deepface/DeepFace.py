@@ -739,11 +739,12 @@ def represent(img_path, model_name = 'VGG-Face', model = None, enforce_detection
     #---------------------------------
 
     #decide input shape
-    input_shape =  input_shape_x, input_shape_y= functions.find_input_shape(model)
+    # input_shape = input_shape_x, input_shape_y = functions.find_input_shape(model)
+    input_shape = functions.find_input_shape(model)
 
     #detect and align
     img = functions.preprocess_face(img = img_path
-        , target_size=(input_shape_y, input_shape_x)
+        , target_size=input_shape
         , enforce_detection = enforce_detection
         , detector_backend = detector_backend
         , align = align)
@@ -817,7 +818,7 @@ def load_representations(db_path: Path, model_name, model, detector_backend, ver
 
                     representation = represent(img_path = str(Path(employee).absolute())
                         , model_name = model_name, model = custom_model
-                        , enforce_detection = True, detector_backend = detector_backend
+                        , enforce_detection = False, detector_backend = detector_backend
                         , align = True)
 
                     instance.append(representation)
@@ -839,7 +840,7 @@ def load_representations(db_path: Path, model_name, model, detector_backend, ver
     else:
         raise ValueError("Passed db_path does not exist!")
 
-def find_faces(img_path, db_path, model_name='VGG-Face', distance_metric='cosine', model=None, detector_backend='opencv', representations = None, verbose=False, show_warnings=True):
+def find_faces(img_path, db_path, model_name='VGG-Face', distance_metric='cosine', model=None, detector_backend='opencv', representations=None, verbose=False, show_warnings=True):
 
     tic = time.time()
     # transform db_path into a pathlib.Path object
@@ -997,10 +998,10 @@ def _represent_no_detection(face_image, model):
     """
 
     #decide input shape
-    input_shape_x, input_shape_y = functions.find_input_shape(model)
+    input_shape = functions.find_input_shape(model)
 
     #detect and align
-    face_vector = functions.preprocess_face_no_detection(img = face_image, target_size=(input_shape_y, input_shape_x))
+    face_vector = functions.preprocess_face_no_detection(img = face_image, target_size=input_shape)
 
     #represent
     embedding = model.predict(face_vector)[0].tolist()

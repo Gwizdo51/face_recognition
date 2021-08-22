@@ -22,13 +22,13 @@ def clear_cached_files(request):
 
     # delete media directory
     media_dir_path = settings.MEDIA_ROOT
-    # print(str(media_folder_path))
     if media_dir_path.is_dir():
         shutil.rmtree(path=media_dir_path)
 
     # delete all entries in the model
-    for img_entry in models.UploadedImages.objects.all():
-        print(img_entry)
+    img_entries = models.UploadedImages.objects.all()
+    print(f"deleting {len(img_entries)} entries")
+    for img_entry in img_entries:
         img_entry.delete()
 
     return render(request, "home/cleared_cached_files.html")
