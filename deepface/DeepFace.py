@@ -878,7 +878,14 @@ def find_faces(img_path, db_path, model_name='VGG-Face', distance_metric='cosine
 
         # load or create the representations for the database
         if representations is None:
-            representations = load_representations(db_path=db_path, model_name=model_name, model=model, detector_backend=detector_backend, verbose=verbose, show_warnings=show_warnings)
+            representations = load_representations(
+                db_path=db_path,
+                model_name=model_name,
+                model=model,
+                detector_backend=detector_backend,
+                verbose=verbose,
+                show_warnings=show_warnings
+            )
 
         #----------------------------
 
@@ -888,13 +895,13 @@ def find_faces(img_path, db_path, model_name='VGG-Face', distance_metric='cosine
         # add the names of the people
         df["name"] = df["img_path"].map(lambda str_path: Path(str_path).parent.name)
 
-        # df["identity"] contains the exact paths of the images in the database,
-        # df["model_representation"] contains their representations,
+        # df["img_path"] contains the exact paths of the images in the database,
+        # df["representation"] contains their representations,
         # df["name"] contains their names.
 
         # load the input image
-        img_path = Path(img_path)
-        cv2_img = functions.load_image(str(img_path.resolve()))
+        img_path = Path(img_path).resolve()
+        cv2_img = functions.load_image(str(img_path))
 
         #find representation for passed image
         detected_faces_images, img_regions_list = functions.detect_faces(
@@ -915,10 +922,10 @@ def find_faces(img_path, db_path, model_name='VGG-Face', distance_metric='cosine
             # compute the representation of the face by the model
             face_representation = _represent_no_detection(face_image=face_img, model=model)
 
-            # compute the distance between both representations
-            distances = []
-            for db_index in range(len(df_face)):
-                db_representation = df.loc[db_index, "representation"]
+            # compute the distances between the representations in the database
+            # and the current face and add them to df_face
+
+            def find_distance_with_current_face(db_representation):
                 if distance_metric == 'cosine':
                     distance = dst.findCosineDistance(db_representation, face_representation)
                 elif distance_metric == 'euclidean':
@@ -927,11 +934,11 @@ def find_faces(img_path, db_path, model_name='VGG-Face', distance_metric='cosine
                     distance = dst.findEuclideanDistance(dst.l2_normalize(db_representation), dst.l2_normalize(face_representation))
                 else:
                     raise ValueError("Please enter a correct distance metric.")
-                # print("index:", db_index, ", distance:", distance)
-                distances.append(distance)
+                return distance
 
-            # add the distances to df_face and drop the representations
-            df_face["distance"] = pd.Series(distances)
+            df_face["distance"] = df_face["representation"].map(find_distance_with_current_face)
+
+            # drop the representations
             df_face = df_face.drop(columns="representation")
 
             # delete distances above threshold of model
@@ -949,7 +956,7 @@ def find_faces(img_path, db_path, model_name='VGG-Face', distance_metric='cosine
             else:
                 # select the first name and assign it to the face
                 new_row = [img_region, df_face.iloc[0, :]["name"], df_face.iloc[0, :]["distance"], df_face.iloc[0, :]["img_path"]]
-            df_result = df_result.append(pd.DataFrame([new_row], columns=["box", "name", "distance", "best_match_path"]))
+            df_result.loc[len(df_result) + 1] = new_row
 
         # reindex df_result
         df_result = df_result.reset_index(drop=True)
