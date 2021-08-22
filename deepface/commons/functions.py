@@ -1,15 +1,14 @@
-if __name__ == "__main__":
-    import sys
-    if '/media/arthur/DATA/Code/projects/16_facial_recognition/face_recognition_project_simplon' not in sys.path:
-        sys.path.insert(0, '/media/arthur/DATA/Code/projects/16_facial_recognition/face_recognition_project_simplon')
-
-import deepface
 import os
 import numpy as np
-import pandas as pd
 import cv2
 import base64
 from pathlib import Path
+
+# maybe not necessary
+import sys
+root_dir_path = str(Path(__file__).resolve().parent.parent.parent)
+if root_dir_path not in sys.path:
+    sys.path.insert(1, root_dir_path)
 
 from deepface.detectors import FaceDetector
 
@@ -17,12 +16,10 @@ import tensorflow as tf
 tf_version = int(tf.__version__.split(".")[0])
 
 if tf_version == 1:
-    import keras
     from keras.preprocessing.image import load_img, save_img, img_to_array
     from keras.applications.imagenet_utils import preprocess_input
     from keras.preprocessing import image
 elif tf_version == 2:
-    from tensorflow import keras
     from tensorflow.keras.preprocessing.image import load_img, save_img, img_to_array
     from tensorflow.keras.applications.imagenet_utils import preprocess_input
     from tensorflow.keras.preprocessing import image

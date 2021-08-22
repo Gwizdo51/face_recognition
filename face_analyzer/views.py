@@ -39,10 +39,12 @@ class DeepFaceWrapper:
     This wrapper handles the DeepFace module for django.
     """
 
-    # 'VGG-Face', VGG-Face', 'OpenFace', 'Facenet', 'Facenet512', 'DeepFace', 'DeepID', 'Dlib', 'ArcFace'
+    # choose another model or detector if you want to experiment:
+
+    # 'VGG-Face', 'OpenFace', 'Facenet', 'Facenet512', 'DeepFace', 'DeepID', 'Dlib', 'ArcFace'
     # ('Emotion', 'Age', 'Gender', 'Race') not implemented
     model_name = 'Facenet'
-    recog_model = DeepFace.build_model('Facenet')
+    recog_model = DeepFace.build_model(model_name)
     # 'opencv', 'ssd', 'dlib', 'mtcnn', 'retinaface'
     detector = 'mtcnn'
     representations = DeepFace.load_representations(

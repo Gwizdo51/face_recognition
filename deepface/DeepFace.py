@@ -1,8 +1,3 @@
-if __name__ == "__main__":
-    import sys
-    if '/media/arthur/DATA/Code/projects/16_facial_recognition/face_recognition_project_simplon' not in sys.path:
-        sys.path.insert(0, '/media/arthur/DATA/Code/projects/16_facial_recognition/face_recognition_project_simplon')
-
 import warnings
 warnings.filterwarnings("ignore")
 
@@ -17,6 +12,11 @@ import pandas as pd
 from tqdm import tqdm
 import pickle
 from pathlib import Path
+
+import sys
+root_dir_path = str(Path(__file__).resolve().parent.parent)
+if root_dir_path not in sys.path:
+    sys.path.insert(1, root_dir_path)
 
 from deepface.basemodels import VGGFace, OpenFace, Facenet, Facenet512, FbDeepFace, DeepID, DlibWrapper, ArcFace, Boosting
 from deepface.extendedmodels import Age, Gender, Race, Emotion
@@ -894,7 +894,7 @@ def find_faces(img_path, db_path, model_name='VGG-Face', distance_metric='cosine
 
         # load the input image
         img_path = Path(img_path)
-        cv2_img = functions.load_image(str(img_path.absolute()))
+        cv2_img = functions.load_image(str(img_path.resolve()))
 
         #find representation for passed image
         detected_faces_images, img_regions_list = functions.detect_faces(
@@ -1059,4 +1059,3 @@ if __name__ == "__main__":
 
     # print("hello world!")
     pass
-    functions.initialize_weights_folder()
