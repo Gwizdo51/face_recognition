@@ -71,7 +71,6 @@ class DeepFaceWrapper:
 
         # get the path of the last analyzed image
         img_path = Path(image_db.uploaded_img.path)
-        print(img_path)
 
         # put the name of the image in the model
         img_name = img_path.name
@@ -114,7 +113,7 @@ class DeepFaceWrapper:
         analyzed_img = cv2.imread(str(img_path))
 
         # resize it to standard size
-        # analyzed_img = functions.resize_img_to_target_size(analyzed_img)
+        analyzed_img, ratio = functions.resize_img_to_target_size(analyzed_img)
 
         # draw boxes on the image
         for face_index in df_result.index:
@@ -123,7 +122,7 @@ class DeepFaceWrapper:
             is_allowed_in = df_result.loc[face_index, "is_allowed_in"]
             if pd.isnull(name):
                 # draw an orange box
-                analyzed_img = functions.draw_box(analyzed_img, box)
+                analyzed_img = functions.draw_box(analyzed_img, box, ratio=ratio)
             else:
                 if is_allowed_in:
                     # draw a green box
@@ -131,7 +130,7 @@ class DeepFaceWrapper:
                 else:
                     # draw a red box
                     color = (0,0,255)
-                analyzed_img = functions.draw_box(analyzed_img, box, color=color, name=name)
+                analyzed_img = functions.draw_box(analyzed_img, box, color=color, name=name, ratio=ratio)
 
         # save the analyzed image in MEDIA_ROOT/analyzed_images
         # (create the directory if it doesn't exist)
@@ -142,7 +141,7 @@ class DeepFaceWrapper:
             os.mkdir(path=analyzed_images_dir_path)
         cv2.imwrite(str(analyzed_img_path), analyzed_img)
 
-        # drop boxes and rows with null values
+        # drop "box" column and rows with null values
         df_result = df_result.drop(columns="box").dropna()
 
         # save df_result as a csv file in MEDIA_ROOT/analyzed_images

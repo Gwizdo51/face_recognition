@@ -254,18 +254,20 @@ def find_input_shape(model):
 
     return input_shape
 
-def draw_box(img, box, color=(0,127,255), name="Unknown"):
+def draw_box(img, box, color=(0,127,255), name="Unknown", ratio=1.):
 
-    x, y, w, h = box
-    x1 = x       # top left corner
+    x, y, w, h = [int(np.round(coordinate * ratio)) for coordinate in box]
+    # top left corner
+    x1 = x
     y1 = y
-    x2 = x + w   # bottom right corner
+    # bottom right corner
+    x2 = x + w
     y2 = y + h
 
     img = cv2.rectangle(img, pt1=(x1, y1), pt2=(x2, y2), color=color, thickness=2)
 
     # bottom left corner of text string
-    x3 = x
+    x3 = x1
     y3 = y2 + 17
     org = (x3, y3)
     font = cv2.FONT_HERSHEY_DUPLEX
@@ -287,7 +289,7 @@ def draw_boxes(img, boxes, color=(0,127,255)):
 
     return new_img
 
-def resize_img_to_target_size(img_to_resize, target_width=1000, target_height=750):
+def resize_img_to_target_size(img_to_resize, target_width=1250, target_height=750):
     """
     This function either upscales or downscales the input image so that
     it meets the target size, while preserving its original aspect ratio.
@@ -301,7 +303,7 @@ def resize_img_to_target_size(img_to_resize, target_width=1000, target_height=75
 
     resized_img = cv2.resize(img_to_resize, (0,0), fx=ratio, fy=ratio)
 
-    return resized_img
+    return resized_img, ratio
 
 
 if __name__ == "__main__":
