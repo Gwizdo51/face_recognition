@@ -14,10 +14,10 @@
     - add a model `registered_clients` <ins>**DONE & TESTED**</ins>
     - fill the model with examples <ins>**DONE & TESTED**</ins>
     - for each row of `df_result`:
-        - if the face is unknown, draw orange box
-        - if the client is known and allowed in, draw green box
-        - if the client is known and not allowed in, draw red box
-- add post-process of `df_result` to display informations regarding the clients on `/last_analyzed_image/`
+        - if the face is unknown, draw orange box  <ins>**DONE & TESTED**</ins>
+        - if the client is known and allowed in, draw green box  <ins>**DONE & TESTED**</ins>
+        - if the client is known and not allowed in, draw red box  <ins>**DONE & TESTED**</ins>
+- add post-process of `df_result` to display informations regarding the clients on `/last_analyzed_image/`  <ins>**DONE & TESTED**</ins>
 - add a css page to group all common styles
 
 ## How to install with anaconda
