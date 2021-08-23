@@ -8,8 +8,9 @@ from pathlib import Path
 import cv2
 import os
 import shutil
-
 import pandas as pd
+import numpy as np
+
 print("loading DeepFace ...")
 from deepface import DeepFace
 from deepface.commons import functions
@@ -19,6 +20,9 @@ from . import forms, models
 
 
 def clear_cached_files(request):
+    """
+    This function clears the cached images and the model entries.
+    """
 
     # delete media directory
     media_dir_path = settings.MEDIA_ROOT
@@ -65,35 +69,89 @@ class DeepFaceWrapper:
         # get the last uploaded image from the model UploadedImages
         image_db = models.UploadedImages.objects.latest('id')
 
+        # get the path of the last analyzed image
+        img_path = Path(image_db.uploaded_img.path)
+        print(img_path)
+
         # put the name of the image in the model
-        name = Path(image_db.uploaded_img.path).name
-        image_db.img_name = name
+        img_name = img_path.name
+        image_db.img_name = img_name
 
         # analyze the image using the DeepFace module
-        df_result, analyzed_img = DeepFace.find_faces(
-            img_path=Path(image_db.uploaded_img.path),
-            db_path=str(settings.BASE_DIR / "database"),
+        df_result = DeepFace.find_faces(
+            img_path=img_path,
+            db_path=settings.BASE_DIR / "database",
             model_name=cls.model_name,
             model=cls.recog_model,
             detector_backend=cls.detector,
             representations=cls.representations,
             verbose=True
         )
-        # print(df_result)
+
+        # drop distance and best_match_path
+        df_result = df_result.drop(columns=["distance", "best_match_path"])
+
+        # add empty columns to match ClientDB
+        df_result["date_of_birth"] = np.nan
+        df_result["VIP"] = np.nan
+        df_result["is_allowed_in"] = np.nan
+        df_result["comments"] = np.nan
+        df_result["total_entry_tickets_bought"] = np.nan
+        df_result["creation_date"] = np.nan
+
+        # complete df_result with data from ClientDB
+        for client in models.ClientDB.objects.all():
+            for index in df_result.index:
+                if df_result.loc[index, "name"] == client.client_name:
+                    df_result.loc[index, "date_of_birth"] = client.date_of_birth
+                    df_result.loc[index, "VIP"] = client.VIP
+                    df_result.loc[index, "is_allowed_in"] = client.is_allowed_in
+                    df_result.loc[index, "comments"] = client.comments
+                    df_result.loc[index, "total_entry_tickets_bought"] = client.total_entry_tickets_bought
+                    df_result.loc[index, "creation_date"] = client.creation_date
+
+        # load original image
+        analyzed_img = cv2.imread(str(img_path))
+
+        # resize it to standard size
+        # analyzed_img = functions.resize_img_to_target_size(analyzed_img)
+
+        # draw boxes on the image
+        for face_index in df_result.index:
+            box = df_result.loc[face_index, "box"]
+            name = df_result.loc[face_index, "name"]
+            is_allowed_in = df_result.loc[face_index, "is_allowed_in"]
+            if pd.isnull(name):
+                # draw an orange box
+                analyzed_img = functions.draw_box(analyzed_img, box)
+            else:
+                if is_allowed_in:
+                    # draw a green box
+                    color = (0,255,0)
+                else:
+                    # draw a red box
+                    color = (0,0,255)
+                analyzed_img = functions.draw_box(analyzed_img, box, color=color, name=name)
 
         # save the analyzed image in MEDIA_ROOT/analyzed_images
         # (create the directory if it doesn't exist)
         analyzed_images_dir_path = Path(settings.MEDIA_ROOT / "analyzed_images")
+        analyzed_img_path = analyzed_images_dir_path / img_name
         if not analyzed_images_dir_path.is_dir():
             print("no analyzed_images directory yet in media, creating")
             os.mkdir(path=analyzed_images_dir_path)
-        cv2.imwrite(str(analyzed_images_dir_path / name), analyzed_img)
+        cv2.imwrite(str(analyzed_img_path), analyzed_img)
+
+        # drop boxes and rows with null values
+        df_result = df_result.drop(columns="box").dropna()
+
+        # save df_result as a csv file in MEDIA_ROOT/analyzed_images
+        csv_name = img_path.stem + ".csv"
+        csv_path = analyzed_images_dir_path / csv_name
+        df_result.to_csv(path_or_buf=str(csv_path), index=False)
 
         # save the model
         image_db.save()
-
-        # return df_result for post-processing
-        return df_result
 
 
 def index(request):
@@ -110,13 +168,16 @@ def index(request):
         form = forms.ImageForm(request.POST, request.FILES)
         if form.is_valid():
             form.save()
-            df_result = DeepFaceWrapper.analyze_uploaded_img()
+            DeepFaceWrapper.analyze_uploaded_img()
             return redirect('/last_analyzed_image/')
         else:
             raise ValueError("form not valid ?")
 
 
 def last_analyzed_image(request):
+    """
+    Shows the last analysed image.
+    """
 
     try:
         last_image_db = models.UploadedImages.objects.latest('id')

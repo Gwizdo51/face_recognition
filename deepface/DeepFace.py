@@ -962,6 +962,8 @@ def find_faces(img_path, db_path, model_name='VGG-Face', distance_metric='cosine
         # reindex df_result
         df_result = df_result.reset_index(drop=True)
 
+        return df_result
+
         # ----------------
         # here we have df_result which contains all informations
         # now let's draw the boxes on a copy of the image

@@ -13,6 +13,5 @@ from . import views
 urlpatterns = [
     path('', views.index),
     path('last_analyzed_image/', views.last_analyzed_image),
-    # path('', views.upload_img),
     path('cached_files_cleared/', views.clear_cached_files)
 ]
