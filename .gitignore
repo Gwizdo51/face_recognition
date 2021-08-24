@@ -11,7 +11,7 @@ deepface.egg-info/
 .DS_Stored
 __pycache__/
 
-/dev_notebook.ipynb
+dev_notebook.ipynb
 db.sqlite3
-/media/
+media/
 model_weights/
