@@ -14,6 +14,14 @@
     body {
         font-size: 125%;
     }
+    table, th, td {
+        border-collapse: collapse;
+        padding: 10px;
+    }
+    table.dataframe {
+        margin-left: auto;
+        margin-right: auto;
+    }
 </style>
 {% endblock %}
 
@@ -33,10 +41,10 @@
     <div class="img_box">
         <img src="{{ analyzed_img_url }}" class="center_fit"/>
     </div>
+    <h2 align="center">Faces recognized</h2>
+    {{ df_result |safe }}
     <p align="center">
         <a href="/">Home page</a>
     </p>
-    <!-- {% load static %}
-    <img alt="test image" src="{% static "images/test02.jpg" %}"> -->
 {% endif %}
 {% endblock  %}

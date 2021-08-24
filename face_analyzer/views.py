@@ -130,7 +130,7 @@ class DeepFaceWrapper:
                 else:
                     # draw a red box
                     color = (0,0,255)
-                analyzed_img = functions.draw_box(analyzed_img, box, color=color, name=name, ratio=ratio)
+                analyzed_img = functions.draw_box(analyzed_img, box, color=color, name=name.replace("_", " "), ratio=ratio)
 
         # save the analyzed image in MEDIA_ROOT/analyzed_images
         # (create the directory if it doesn't exist)
@@ -179,11 +179,30 @@ def last_analyzed_image(request):
     """
 
     try:
+        # get the last entry in UploadedImages
         last_image_db = models.UploadedImages.objects.latest('id')
 
-        name = last_image_db.img_name
-        last_analyzed_img_url = settings.MEDIA_URL + "analyzed_images/" + name
-        context = {"analyzed_img_url": last_analyzed_img_url, "db_is_empty": False}
+        # get the name of the last analyzed image and its corresponding csv
+        img_name = last_image_db.img_name
+        csv_name = Path(img_name).stem + ".csv"
+
+        # load the csv with pandas
+        csv_path = settings.MEDIA_ROOT / "analyzed_images" / csv_name
+        df_result = pd.read_csv(filepath_or_buffer=str(csv_path))
+
+        # format the DataFrame
+        df_result["total_entry_tickets_bought"] = df_result["total_entry_tickets_bought"].astype('int32')
+        df_result["date_of_birth"] = pd.to_datetime(df_result["date_of_birth"])
+        df_result["date_of_birth"] = df_result["date_of_birth"].dt.strftime('%d-%m-%Y')
+        df_result["creation_date"] = pd.to_datetime(df_result["creation_date"])
+        df_result["creation_date"] = df_result["creation_date"].dt.strftime('%d-%m-%Y')
+
+        last_analyzed_img_url = settings.MEDIA_URL + "analyzed_images/" + img_name
+        context = {
+            "db_is_empty": False,
+            "analyzed_img_url": last_analyzed_img_url,
+            "df_result": df_result.to_html(index=False).replace("_", " ")
+        }
 
     except models.UploadedImages.DoesNotExist:
         context = {"db_is_empty": True}
