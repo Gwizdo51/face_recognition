@@ -7,11 +7,6 @@
     * {
     box-sizing: border-box;
     }
-    {% comment %} img {
-        display: block;
-        margin-left: auto;
-        margin-right: auto;
-    } {% endcomment %}
     div.center {
         text-align: center;
     }
@@ -33,21 +28,19 @@
 {% endblock %}
 
 {% block body %}
+
 <h1 align="center">Image analyzer</h1>
-<!-- {% load static %}
-<img alt="test image" src="{% static "images/test02.jpg" %}">
-<p>stuff and stuff<br>
-and other stuff</p> -->
+
 {% load static %}
+
 <div class="row">
     <div class="column">
-        <img alt="input image" src="{% static "images/test02_resized_1000_750.jpg" %}" style="width:100%">
+        <img src="{% static "images/test02_resized_1000_750.jpg" %}" style="width:100%">
     </div>
     <div class="column">
-        <img alt="output image" src="{% static "images/test02_analyzed_resized_1000_750.jpg" %}" style="width:100%">
+        <img src="{% static "images/test02_analyzed_resized_1000_750.jpg" %}" style="width:100%">
     </div>
 </div>
-{% comment %} <img src="{{ image_1_url }}" style="width:100%" /> {% endcomment %}
 <div class="center">
     <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
