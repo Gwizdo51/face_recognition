@@ -1,9 +1,6 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, JsonResponse
-from numpy.random import randint, choice
-# import time
 from django.conf import settings
-# from django.views import View
 from pathlib import Path
 import cv2
 import os
