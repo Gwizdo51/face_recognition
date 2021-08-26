@@ -36,6 +36,6 @@
 - go the root of the repository
 - create the sqlite database file: `python manage.py migrate`<br>
 this step might take a while as deepface will load and create representations for all the faces in the database directory.
-- add fake informations about fake clients: `python manage.py shell < create_client_db.py`
+- add fake informations about fake clients: `python create_client_db.py`
 - run the django server: `python manage.py runserver`
 - go to the url created by django and enjoy

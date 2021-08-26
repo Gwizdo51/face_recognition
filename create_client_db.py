@@ -1,3 +1,9 @@
+import os
+
+import django
+os.environ["DJANGO_SETTINGS_MODULE"] = "face_analyzer_django.settings"
+django.setup()
+
 from face_analyzer import models
 from datetime import date
 
